@@ -1,0 +1,472 @@
+--------------------------------------------------------------------------------
+git --distributed-is-the-new-centralized
+https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control
+--------------------------------------------------------------------------------
+
+
+	----------------------------------------------------------------------------
+	5. Distributed Workflows
+	----------------------------------------------------------------------------
+
+
+	5.1 Distributed Git - Distributed Workflows
+
+		- Centralized Workflow
+
+			- One central hub/repository
+			- Everyone synchronizes their with with it
+
+
+								+------------+
+								|   shared	 |
+								| repository |
+								+------------+
+								  /	  |   \
+						 ---------	  |	   ---------
+						/			  |				\
+				+-----------+	+-----------+	+-----------+
+				| developer |   | developer |   | developer |
+				| (node  1) |   | (node  2) |   | (node  3) |
+				+-----------+   +-----------+   +-----------+
+
+		- Integration-Manager Workflow	
+
+			- Each developer has:
+				(1) write access to their own public repository
+				(2) read access to everyone else's repository
+
+			- Canonical repository
+				- Usually inlcuded
+				- Represents "official" project
+
+			- Process
+				(1) The project maintainer pushes to their public repository
+				(2) A contributor clones that repository and makes changes
+				(3) The contributor pushes to their own public copy
+				(4) The contributor sends the maintainer an pull request email
+				(5) The maintainer adds the contributor's repository as remote
+					and merges locally
+				(6) The maintainer pushes merged chanes to the main repository
+
+			- One main advantage
+				- Maintainer can pull in changes at any time
+				- Contributors don't have to wait for the project to incorporate
+				  their changes
+
+		- Dictator and Lieutenants Workflow
+
+			- Mulitple-repository workflow
+			- For huge projects (e.g., Linux kernel)
+			- Lieutenants
+
+				- Integration managers
+				- In charge of certain parts of the repository
+
+			- Dictator
+
+				- Integration manager of Lieutenants
+				- Pushes to reference repository
+
+			- Process
+				(1) Regular developers work on their topic branch and rebase
+					their work on top of master (master branch is that of the
+					reference repository to which the dictator pushes)
+				(2) Lieutenants merge the developers' topic branches into their
+					master branch
+				(3) The dictator merges the lieutenants' master branches into
+					the dictator's master branch
+				(4) The dictator pushes his master branch to the reference
+					repository so the other developers can rebase on it
+
+
+	5.2 Distributed Git - Contributing to a Project
+
+		- Some important variables in chosen a contribution style
+
+			- Active contributor count
+			- Chosen workflow
+			- Commit access
+			- External contribution method
+
+		- Commit Guidelines
+
+			- Have a good guideline for creating commits
+			- Stick to the guidelines!
+			- Some advices:
+
+				- Submissions should not contain any whitespace errors
+
+						git diff --check
+
+				- Try to make each commit a logically separate changeset
+					- Try to make changes digestible
+
+						git add --patch
+
+					- Aim for a clean and understandable history
+
+				- Commit messages
+					- General rule
+						(1) Start with a single line with no more than 50 chars
+						(2) Blank line
+						(3) More detailed explanation
+								- Including:
+									- Motivation
+									- Difference to previous behavior
+					- Write in the imperative
+
+							"Fix bug" not "Fixed bug" or "Fixes bug"
+									
+			- "Templates"
+
+				- Check Git project with
+
+						git log --no-merges
+
+		- Private Small Team
+
+			- Finding out what has to be merged to be able to push
+
+						git log --no-merges issue54..origin/master
+
+		- Private Managed Team				
+
+			- Fetch and merge specific branch
+
+						git fetch origin
+						git merge origin/featureBranch
+
+			- Push to branch differently named at remote (Refspec)
+
+						git push --set-upstream featureBranch:featureB
+
+			- Comparing content of newly-fetched branch with local copy of
+			  the same branch
+
+			  			git fetch origin
+						git log branch..origin/branch
+
+				- Merge
+
+						git checkout branch
+						git merge origin/branch
+
+		- Forked Public Project
+
+			- Example (accepting contributed patches via email)
+
+						git clone <url>
+						cd project
+						git checkout -b featureA
+						... work ...
+						git commit
+						... work ...
+						git commit
+
+				- Note:
+					- Maybe use the following to squash the work into a single
+					  commit or rearrange the work in the commits to make the
+					  patch easier for the maintainer to review
+
+					  	git rebase --interactive
+
+				- When work is ready to be contributed
+
+					(1) Go to the original projec page and click "Fork"
+					(2) Add this repository URL as new remote
+
+						git remote add myfork <url>
+
+					(3) Push new work to repository (easier to push topic branch
+						than merging work into master and then pushing!)
+
+						git push --set-upstream myfork featureA
+
+					(4) Notify maintainers of original project (pull request)
+
+						git request-pull origin/master myfork
+
+							- Email the seubsequent output to the project
+							  maintainer manually?
+
+				- When project maintainer pulled other patches and our branch
+				  no longer cleanly merges, try to reabse that branch on top
+				  of origin/master, resolve the conflicts for the maintainer,
+				  and then resubmit changes
+
+				  		git checkout featureA
+						git rebase origin/master
+						git push --force myfork featureA
+
+							- force needs to be used in order to be able to
+							  replace the featureA branch with a descendant
+							  of it (because we rebased branch)
+							- Alternative: push to a new branch  
+
+				- Changing some implementation details and then push as new
+
+						git checkout -b featureBv2 origin/master
+						git merge --squash featureB
+						... change implementation ...
+						git commit
+						git push myfork featureBv2
+
+		- Public Project over Email
+
+			- Generate email versions of each commit series and email them to
+			  the developer mailing list
+
+			  			git checkout -b topicA
+						... work ...
+						git commit
+						... work ...
+						git commit
+
+				- Generate mbox-formatted files (turning each commit into an
+				  email message - preserves all commit info properly)
+
+						git format-patch --find-renames origin/master
+
+					- More information for the email list, that does not show
+					  up in the commit message
+
+					  	- Add text between the --- line and the beginning of
+						  the patch (the diff --git line)
+
+					- Send patch via Gmail
+
+						vim ~/.gitconfig
+
+							[imap]
+								folder = "[Gmail]/Drafts"
+								host = imaps://imap.gmail.com
+								user = user@gmail.com
+								pass = DOFIJ(*(
+								port = 993
+								sslverify = false
+
+						cat *.patch | git imap-send
+
+					- Using SMTP server
+
+						vim ~/.gitconfig
+
+							[sendemail]
+								smtpencryption = tls
+								smtpserver = smtp.gmail.com
+								smtpuser = user@gmail.com
+								smtpserverport = 587
+
+						git send-email *.patch
+
+
+	5.3 Distributed Git - Maintaining a Project
+
+		- Working in Topic Branches
+
+			- Chose descriptive name for the branch
+
+						git branch -b sc/ruby_client master
+
+		- Applying Patches from Email
+
+			- Apply with 'apply'
+
+				- For patches generated with 'git diff' or variation of
+				  Unix diff
+				- Usually should be used for legacy patches only
+
+				  		git apply /tmp/patch-ruby-client.patch
+
+					- Check if patch applies cleanly before applying it
+
+						git apply --check 0001-see-if-this-helps.patch
+
+			- Apply with 'am'
+
+				- For patches generated with 'format-patch'
+
+						git am 0001-limit-log-function.patch
+
+				- In case of an conflict
+
+						(fix the_file)
+						git add the_file
+						git am --resolved
+
+				- Attempting a three-way merge (if patch based on public commit)
+
+						git am -3 0001-bla.patch
+
+				- Running interacivtely (e.g., if applying multiple patches)
+
+						git am -3 --interactive mbox
+
+		- Checking Out Remote Branches
+
+			- Testing remote branches out
+
+					git remote add jessica https://github.com/jessica/...git
+					git fetch jessica
+					git checkout -b rubyclient jessica/ruby-client
+
+			- Do one-time pull without saving the URL
+
+					git pull https://...
+
+		- Determining What Is Introduced
+
+			- Excluding specific branches
+
+					git log contrib --not master
+					git log master..contrib
+
+				- Append the diff introduced to each commit
+
+					git log -p ...
+
+			- View full diff of merge between topic branch and another branch
+				- Compare last commit on topic branch with first ancestor it
+				  has with the other branch
+				  - Check out common ancestor
+
+				  	git merge-base contrib master
+
+					git diff $(git merge-base contrib master)
+
+				- Check common ancestor of two (merged) branches
+
+					git diff master...contrib
+
+		- Integrating Contributed Work
+
+			- Merging Workflows
+
+				- Merging all work directly into master
+				- Simple workflow
+				- Can be problematic (e.g., larger/stable projects)
+
+			- Two-phase Merge Cycle
+
+				- Example
+					- Two long-running branches (master, develop)
+					- master is only updated when new code is integrated into
+					  the develop branch
+					  	- Both branches regularly pushed to public repo
+						- New topic branches merged into develop
+						- Fast-forward master to now-stable develop
+
+				- Main is always latest stable version
+
+		- Large-Merging Workflows
+
+			- Example
+				- Git Project
+					- Four long-running branches
+						- master
+						- next
+						- seen (fromerly "pu" - proposed updates)
+						- maint (maintenance backports)
+					- Process
+						- Work from contributers in topic branches in a
+						  maintainer's repository manner
+						- Safe topics go into next and pushed up
+						- Topics in need of more work are merged into seen
+						- When totally stable: topic is merged into master
+							- Then removed from repository
+
+						- master almost always moves forward
+						- next is rebased occasionally
+						- seen is rebased even more often
+
+						- maint branch
+							- forked off from the last release
+							- provides backported patches in case a
+							  maintenance release is required
+
+			- Diagram can help?
+
+		- Rebasing and Cherry-Picking Workflows
+
+			- For keeping a mostly linear history
+			- Process (merging)
+				- Topic branches are integrated on top of current master or
+				  develop branch
+				- Testing
+				- Fast-forward master if all goes well
+			- Process (cherry-picking)
+				- Topic branche
+				- Integrating only one commit from topic branch onto master
+
+						git checkout master
+						git cherry-pick e43a6
+
+				- Remove topic branch
+
+		- Rerere
+
+			- Reuse Recorded Resolution
+			- Where rerere is enabled:
+				- Git keeps a set or pre- and post-images from successful merges
+				- If conflict looks exactly like one fixed earlier:
+					- Git uses fix from last time
+			- Setting/Command
+
+						git config --global rerere.enabled true
+
+			- Interacting with rerere
+
+						git rerere
+
+		- Tagging Your Releases
+
+			- Tagging a release to re-create it at any point going forward
+
+						git tag - v1.5 -m 'my signed 1.5 tag'
+
+			- Tagging and gpg
+
+						gpg --list -keys
+
+					- Import key into Git database
+
+						gpg -a --export F721C45A | git hash-object -w --stdin
+
+					- Create tag that points to contents of the key in Git
+
+						git tag -a maintainer-pgp-pub 65ef462d14556ba3...46567b
+
+					- Share maintainer-pgp-pub tag with everyone
+
+						git push --tags
+
+					- Verifying a tag (by pulling blob directly out of the
+					  database and importing it into GPG)
+
+					  	git show maintainer-pgp-pub | gpg --import
+
+					- Get more specific instructions about tag verification
+
+						git show <tag>
+
+		- Generating a Build Number
+
+			- Give an object a human readable name based on an available ref
+
+						git describe master
+
+		- Preparing a Release
+
+			- Create archive of latest snapsho
+
+						git archive master --prefix='projec/' | \
+							gzip > $(git describe master).tar.gz
+
+						git archive master --prefix='project/' --format=zip > \
+							$(git describe master).zip
+
+		- The Shortlog
+
+			- Summarize all commits in a given range
+
+						git shortlog --no-merges master --not v1.0.1

@@ -1,0 +1,1314 @@
+--------------------------------------------------------------------------------
+git --distributed-is-the-new-centralized
+https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control
+--------------------------------------------------------------------------------
+
+
+	----------------------------------------------------------------------------
+	7. Git Tools
+	----------------------------------------------------------------------------
+
+	
+	7.1 Git Tools - Revision Selection
+
+		- Git allows to refer to
+			- a single commit
+			- a set of commits
+			- a range of commits
+
+		- Singel Revisions
+
+			- Refer to a single commit by its full, 40-character SHA-1 hash
+
+		- Short SHA-1
+
+			- Partial hash
+				- min four characters long
+				- unambiguous
+
+			- Example
+
+					git show 1c002dd4b536e7479fe34593e72e6c6c1819e53b
+					git show 1c002dd4b536e7
+					git show 1c002d
+
+				 - Get shorter values (guaranteed unique)
+
+				 	git log --abbrev-commit --pretty=oneline
+
+		- Branch References
+
+			- Referencing a commit at the tip of a branch:
+				- Use the branch name in the command that expects a reference
+
+					git show <branch_name>
+
+			- Check the SHA-1 a branch points to
+
+					git rev-parse <branch_name>
+
+		- RefLog Shortnames
+			
+			- Reflog
+				- log of where the HEAD and branches references have been
+				- reflog information is strictly local!
+
+			- View reflog
+
+					git reflog
+
+			- Refer to older commits: see the fifth prior value of the HEAD
+
+					git show HEAD@{5}
+					git show "HEAD@{5}"		# Powershell
+
+			- View reflog info formatted like the 'git log' output
+
+					git log --walk-reflogs <branch_name>
+					git log -g <branch_name>
+
+			- Where was master branch yesterday
+
+					git show master@{yesterday}		# Powershell doesn't work
+
+			- Where was the head three days ago
+
+					git show HEAD@{2.days.ago}
+					git show "HEAD@{2.days.ago}"	# Powershell
+
+		- Ancestry References
+
+			- Caret at the end of a reference
+				- Git resolves it to mean the parent of that commit
+
+					git show HEAD^
+					git show 43f0fff^
+
+				- The parent of the parent
+
+					git show HEAD^^
+					git show "HEAD^^"				# cmd.exe
+
+				- The second parent of a commit (only useful for merge commits
+				  that have more than one parent)
+
+					git show 43f0fff^2
+
+			- Tilde at the end of a reference
+				- Equivalent to caret
+
+					git show HEAD~
+					git show HEAD~~
+					git show HEAD~3			# for merge commits with parents
+
+			- Second parent of the previous reference (assuming it was a merge
+			  commit)
+
+			  		git show HEAD~3^2
+
+		- Commit Ranges
+
+			- Double-Dot Syntax
+				- Asks Git to resolve a range of commits that are reachable from
+				  one commit but aren't reachable from another
+
+				- Example
+
+							A - B - E - F <-- master
+								  \
+									C - D <-- experiment
+
+					git log master..experiment
+					D
+					C
+
+					git log experiment..master
+					F
+					E
+
+				- Show any commits in current branch that aren't in the master
+				  of origin
+
+					git log origin/master..HEAD
+					git log origin/master..			# equivalent
+
+			- Multiple Points
+
+				- Excluding several branches with ^ or --
+				- The following are equivalent
+
+					git log refA..refB
+					git log ^refA refB
+					git log refB --not refA
+
+				- Example
+
+					git log refA refB ^refC
+					git log refA refB --not refC
+
+			- Triple-Dot Syntax
+				- Specifies all commits that are reachable by either of two
+				  references but not by both of them
+
+				- Check what is on master and experiment but not any common
+				  references
+
+							A - B - E - F <-- master
+								  \
+									C - D <-- experiment
+
+					git log master...experiment
+					F
+					E
+					D
+					C
+
+				- Show membership
+
+					git log --left-right master...experiment
+					< F
+					< E
+					> D
+					> C
+
+
+	7.2 Git Tools - Interactive Staging
+
+		- Can be used to have commits being logically separate changesets
+		- Enter the interactive shell mode
+
+					$ git add --interactive
+					...
+					What now>
+
+				- Commands
+
+					1: status				5: patch
+					2: update				6: diff
+					3: revert				7: quit
+					4: add untracked		8: help
+
+		- Staging and Unstaging Files
+
+					What now> update
+					...
+					Update>>
+
+			- Stage first two files in the list
+
+					Update>> 1,2
+
+				- Those files are marked with *
+				- Executing (pressing enter again w/o anything typed in)
+
+					Update>>
+					updated 2 paths
+					...
+
+			- Get status
+
+					What now> status
+
+			- Unstaging the first file
+
+					What now> revert
+					...
+					Revert>> 1
+					...
+					Revert>> [enter]
+					reverted one path
+
+			- View diff of what is staged
+
+					What now> diff
+					Review diff>> 1
+
+				- Much like
+
+					git diff --cached
+
+		- Staging Patches
+
+					What now> patch
+					Patch update>> 1
+					Patch update>>
+					Stage this hunk [y,n,q,a,d,s,e,?]?
+
+				- Options
+
+					y  stage this hunk
+					n  do not stage this hunk
+					a  stage this and all the remaining hunks in the file
+					d  do not stage this hunk nor any of the remaining ones
+					g  select a hunk to go to
+					/  search for a hunk mathcing the given regex
+					j  leave this hunk undecided, see next undecided hunk
+					J  leave this hunk undecided, see next hunk
+					k  leave this hunk undecided, see previous undecided hunk
+					K  leave this hunk undecided, see previous hunk
+					s  split the current hunk into smaller hunks
+					e  manually edit the current hunk
+					?  print help
+
+		- Partial-file staging
+
+					git add --patch
+
+		- Partially reseting files
+
+					git reset --patch
+
+		- Stashing parts of files
+
+					git stash save --patch
+					
+
+	7.3 Git Tools - Stashing and Cleaning
+
+		- save vs push
+
+			- Use
+
+					git stash push
+
+			- Deprecated
+
+					git stash save
+
+		- Stashing Your Work
+
+					git stash
+
+			- View stored stashes
+
+					git stash list
+
+			- Apply stashes
+
+					git stash apply					# most recent
+					git stash apply stash@{2}		# specific
+					git stash apply "stash@{2}"		# Powershell
+
+			- Try to reapply staged changes
+
+					git stash apply --index
+
+			- Remove specific stashed work from stack
+
+					git stash drop stash@{2}
+					git stash drop "stash@{2}"		# Powershell
+
+			- Apply stash and immediately drop it from the stack		
+
+					git stash pop
+
+		- Creative Stashing
+
+			- Keep all changes already added to the index intact
+
+					git stash --keep-index
+
+			- Include untracked files in the stash (ignored ones not included)
+
+					git stash --include-untracked
+
+			- Even include ignored files
+
+					git stash --all
+
+			- Interactively stash changes
+
+					git stash --patch
+
+		- Creating a Branch from a Stash
+
+					git stash branch <branch_name>
+
+		- Cleaning your Working Directory			
+
+			- CARE! 'git clean' is destructive!
+				- If uncertain: use 'git stash --all'
+
+			- Remove all untracked files and subdirectories from working dir
+
+					git clean -d --force	# -d recursively
+
+			- Do a dry run
+
+					git clean --dry-run
+					git clean -n
+
+			- Remove ignored files as well
+
+					git clean -x --force
+
+			- Procedure to be relatively safe
+
+					git clean --dry-run		# Always check first!
+					git clean --force		# Then force
+
+				- Another possiblity
+
+					git clean -x --interactive
+
+			- Situations where --force does not work (e.g., working dir under
+			  which one copied/cloned another Git repository)
+
+			  		git clean --ffd
+
+
+	7.4 Git Tools - Signing Your Work
+
+
+		- GPG Introduction
+
+			- List gpg keys
+
+					gpg --list-keys
+
+			- Generate a key
+
+					gpg --gen-key
+
+			- Configure Git to use the key
+
+					git config --global user.signingkey 0A46826A!
+
+		- Signing Tags
+
+					git tag -s v1.5 -m 'my signed 1.5 tag'
+
+			- Check for GPG signature
+
+					git show v1.5
+
+		- Verify Tags
+
+					git tag --verify <tag_name>
+					git tag -v <tag_name>
+
+			- The signer's public key needs to be in the keyring for this to
+			  work properly
+
+		- Signing Commits
+
+					git commit --gpg-sign[=<keyid>]
+					git commit -S
+
+			- Verify signatures
+
+					git log --show-signature
+
+			- CHeck any signatures found and list them: %G?
+
+					git log --pretty='format:%h %G? %aN $s'
+
+			- Inspect when merging and pulling and reject non-trusted
+
+					git merge --verify-signatures <branch_name>
+
+			- Signing while merging
+
+					git merge --gpg-sign[=<keyid>] <branch_name>
+					git merge -S <branch_name>
+
+					git merge --verify-signatures --gpg-sign some_branch
+
+		- Configuration for all in team
+
+					git config --local commit.gpgsign true
+
+			- People need this configuration, so they don't have to sign
+			  manually, or else there is a lot of work to do for admins
+
+
+	7.5 Git Tools - Searching
+
+		- Git Grep
+
+			- Searching in:
+				- committed trees
+				- working directory
+				- index
+
+			- Find string in working dir and print line number
+
+					git grep --line-number string
+					git grep -n string
+
+			- Show which files contain string and how many matches in each
+
+					git grep --count string
+
+			- Show context of string
+
+					git grep --show-function string *.c
+
+			- Split up the output into a more readable format
+
+					git grep --break --heading string
+
+			- More complex example
+				- Find lines that define a constant whose name contains either
+				  of the substrings "LINK" or "BUF_MAX" specifically in older
+				  codebase represented by tag v1.8.0
+
+				  	git grep --break --heading --line-number \
+						-e '#define' --and \( -e LINK -e BUF_MAX \) v1.8.0
+
+		- Git Log Searching
+
+			- Not looking for where a term exists, but when it existed or was
+			  introduced
+
+			- Look for differences that change the number of occurrences of
+			  specified string in a file
+
+			  		git log -S string --oneline
+
+			- Line Log Search
+
+				- Trace the evolution of the line range given by the function
+				  name regex <funcname> (also for line ranges: see --help)
+
+				  	git log -L :<funcname>:<file>
+
+					git log -L  :git_deflate_bound:zlib.c
+					git log -L \
+						'/unsigned long git_deflate_bound/',/^}/:zlib.c
+						
+			- Ensure multiple matches must occur in the same line
+
+					git grep st
+
+
+	7.6 Git Tools - Rewriting History
+
+		- Rules to consider
+
+			(1) Don't push work until you are happy with it
+			(2) Once work is pushed, it should be considered as final
+
+		- Changing the Last Commit
+
+			- Modify the last commit message and/or change content
+
+					git commit --amend
+
+				- Amend without changing commit message
+
+					git commit --ammend --no-edit
+
+		- Changing Multiple Commit Messages			
+
+			- Edit the last three commit messages
+
+					git rebase --interactive HEAD~3
+
+				- NOTE: commits are in opposite order compared to log
+
+					git log --oneline HEAD~3..HEAD
+
+				- While in interactive mode: chose commit to be modified
+
+					edit 34ef561 Change this text in the next step
+					pick 84ab3ca ...
+					pick ed2de12 ...
+
+				- Safe and exit, then change the comment by
+
+					git commit --amend
+
+				- Finally run
+
+					git rebase --continue
+
+		- Reordering Commits
+
+					git rebase --interactive HEAD~2
+
+						pick 84ab3ca 1st
+						pick ed2de12 2nd
+						pick bcb123d 3rd
+
+				- Switch position of lines, safe and exit
+
+						pick ed2de12 2nd
+						pick 84ab3ca 1st
+						
+				- 3rd would be deleted in the setup above!
+
+		- Squashing Commits
+
+				- Squash last two commits
+
+					git rebase --interactive HEAD~2
+
+						pick 1234abc ...
+						squash abcd123 ...
+
+		- Splitting a Commit
+
+					git rebase --interactive HEAD~3
+
+						pick ... not important
+						edit ... update something and do something else
+						pick ... not important again
+
+						git reset HEAD^
+						git add update.file
+						git commit -m "update something"
+						git add something.file
+						git commit -m "do something else"
+						git rebase --continue
+
+		- Deleting a commit
+
+					git rebase --interactive HEAD~1
+
+						drop 12ab34c ...
+
+			- CARE
+				- Deleting/altering a commit will cause the rewriting of all
+				  commits that follow
+					- The further back in history, the more commits will
+					  need to be recreated
+					- Can cause lots of merge conflicts
+
+			- Recover after rebase
+
+						git reflog
+
+					- Then for example
+
+						git checkout -b <branch_name> <hash_of_dropped_commit>
+
+		- The Nuclear Option: filter-branch
+
+			- No longer recommended:
+				- Consider
+
+						git-filter-repo
+
+						https://github.com/newren/git-filter-repo
+
+			- Removing a File from Every Commit
+
+				- Usecases
+					- Huge file
+					- Password in a file
+
+				- Remove file named passwords.txt
+
+					git filter-branch --tree-filter \
+						'rm -f passwords.txt' HEAD
+
+				- Remove editor backup files
+
+					git filter-branch --tree-filter \
+						'rm -f *~' HEAD
+
+			- Making a Subdirectory the New Root
+			- Changing Email Addresses Globally
+
+
+	7.7 Git Tools - Reset Demystified
+
+		- The Three Trees
+
+			- Tree = "collection of files"
+			- Three Trees
+				
+					Tree			Role
+				------------------------------------------------------
+				(1) HEAD			Last commit snapshot, next parent
+				(2) Index			Proposed next commit snapshot
+				(3) Working Dir		Sandbox
+
+		- The HEAD
+
+			- Pointer to the current branch reference
+				- is pointer to the last commit made on that branch
+				- will be parent of the next commit that is created
+
+			- Actual directory listing and SHA-1 checksums for each file in
+			  the HEAD snapshot
+
+			  		git cat-file -p HEAD
+
+					git ls-tree -r HEAD
+
+		- The Index
+
+			- Proposed next commit
+				- populated with a list of all the file contents
+					(1) last checked out
+					(2) originally checked out
+				- Some are replaced with new versions
+
+		- The Working Directory
+
+			- The "working tree
+				- unpacks the content of the other two trees into actual files
+
+		- The Workflow
+
+					Working
+					Directory			   Index		   HEAD
+						|					 |				 |
+						|<------ Checkout The Project -------|
+						|--- Stage Files --->|				 |
+						|					 |--- Commit --->|
+
+		- Checking out a branch
+
+			- Process
+				(1) Changing HEAD to point to the new branch ref
+				(2) Populates the index with the snapshot of that commit
+				(3) Copies the contents of the index into the working dir
+
+		- The Role of Reset
+
+					git reset HEAD~
+
+			- reset directly manipulates the three trees in s simple way
+
+				(1) Move HEAD
+						- This essentially undo's the last commit command
+							- When reseting back to HEAD~ (parent of HEAD)
+							  we are moving the branch back to where it was,
+							  without changing index or working directory
+						- reset stops now if using
+
+								git reset --soft HEAD~
+
+				(2) Updating the Index (--mixed)
+						- reset updates the index with the contents of
+						  whatever snapshot HEAD now points to
+						- reset stops now if using
+
+								git reset --mixed HEAD~
+								git reset HEAD~				# equivalent
+
+						- means:
+							- commit command undone
+							- unstaged everything
+
+				(3) Updating the Working Directory (--hard)
+						- reset makes the working directory look like the index
+						- reset continues to this stage if using
+
+								git reset --hard HEAD~
+
+						- means:
+							- commit command undone
+							- unstaged everyting
+							- undid work done in the working directory (e.g.,
+							  removing files!)
+						- reset --hard forcibly overwrites files in the working
+						  directory
+						  	- If not being committed before:
+								- Files are overwritten/removed and
+								  unrecoverable
+							- If committed before:
+								- Certain versions still in Git DB
+								- Recoverable via reflog
+
+			- Recap
+				
+				(1) Move the branch HEAD points to
+
+						git reset --soft HEAD~
+
+				(2) Make the index look like HEAD
+
+						git reset --mixed HEAD~
+						git reset HEAD~
+
+				(3) Make the working directory look like the index		
+
+		- Reset With a Path		
+
+						git reset HEAD~ file.txt
+
+			- Practical effect of unstaging the file
+				
+			- Example
+
+						git init
+						echo 123 > 123
+						git add 123
+						git commit -m "initial"
+
+						echo 1 >> 123
+						git commit -am "1"
+						echo 2 >> 123
+						git commit -am "2"
+						type 123					# Powershell
+
+							123
+							1
+							2
+
+						git reset <hash_of_initial> 123
+						git type 123
+
+							123
+							1
+							2
+
+						git restore 123
+						type 123
+
+							123
+
+						git add 123
+						git commit -m "after reset"
+
+						git switch --detach <hash_of_2>
+						type 123
+
+							123
+							1
+							2
+
+		- Squashing
+
+			- Example
+				- Assumption
+					- Commit 1 (hash-1):
+						file-a.txt v1
+					- Commit 2 (hash-2):
+						file-a.txt v2
+						file-b.txt v1
+					- Commit 3 (hash-3):
+						file-a.txt v3
+						file-b.txt v1
+				- "Deleting" the second commit
+
+					git reset --soft HEAD~2
+					git commit
+
+		- Check It Out
+
+			- Difference between checkout and reset
+
+				- Without Paths
+
+					git checkout [branch]
+
+						- Similar to git reset --hard [branch], but
+							(1) tries to do a trivial merge in the working dir,
+							    so all files you haven't changed will be updated
+							  		- reset --hard simply replaces
+							(2) moves HEAD itself to point to another branch
+									- reset --hard moves branch that HEAD points
+									  to
+
+
+					HEAD		 	  HEAD		 		  HEAD
+					  |          	    |          			|
+		master	   develop   master	 develop       		  master    develop
+		  |			  |           |	 |        				|		   |
+		  v			  v           v	 v		  				v          v
+	   commit A <- commit B     commit A <- commit B    commit A <- commit B
+
+	   		before command			after reset				after checkout
+
+
+				- With Paths
+
+					git checkout <branch/hash> file
+
+						- Like git reset [branch/hash] file, 
+							- but it also overwrites the file in the working dir
+						- It's not working-directory safe
+						- It does not move HEAD
+
+					- Like git reset and git add
+
+						git checkout --patch ...
+
+
+	7.8 Git Tools - Advanced Merging
+
+		- Problems arise
+			- When waiting too long to merge two branches that diverge quickly
+
+		- Merge Conflicts
+
+			- Important
+				- If merging, try to have a clean working directory
+					- If necessary use either
+						(1) temporary branch
+						(2) stash
+
+			- Example
+
+						echo 'initial state' > file.txt
+
+						git checkout -b whitespace
+						echo ' ' >> file.txt
+						git diff --ignore-space-change
+						git commit -am 'first modification on whitespace'
+
+						git checkout master
+						echo 'first modification on master' >> file.txt
+						git diff --ignore-space-change
+						git commit -am 'first modification on master'
+
+						# creating a merging conflict
+						git merge whitespace
+
+		- Aborting a Merge
+
+						git status --short --branch		# U unmerged
+
+						git merge --abort
+
+						git status -sb
+
+			- Problem can arise when having unstashed, uncommitted changes in
+			  the working directory
+			
+			- Reset repository to last committed state
+
+						git reset --hard HEAD
+
+				- CARE:
+					- Any uncommitted work will be lost!
+
+		- Ignoring Whitespace
+
+			- In our case (example from above) the conflict is whitespace
+			  related
+
+			- Default merge strategy with arguments
+
+						git merge -Xignore-space-change whitespace
+								or
+						git merge -Xignore-all-space whitespace
+
+				- Lifesafer in case of inconsistencies concerning whitespace
+				  and tabs
+
+		- Manual File Re-merging
+
+			- Three version of one file while at merging conflict
+			  (Example conflict file: file.rb)
+
+						git merge <branch>
+
+						git show:1:file.rb > file.common.rb
+						git show:2:file.rb > file.ours.rb
+						git show:3:file.rb > file.theirs.rb
+
+				- Get actual SHA-1s of the Git blobs fore each of the files above
+
+						git ls-files --unmerged
+
+							100755 ac51e...d328d1a02ad05331d8e2c9111 1	file.rb
+							100755 36c02...aff89571132f3bf7841a7b5c3 2	file.rb
+							100755 e8520...b0a1e9febbc67fd837c44a1cd 3	file.rb
+
+					- :1:file.rb
+						- Just a shorthand for looking up that blob SHA-1
+
+			- Example
+				- We need to convert "their" file to fix the merging conflict
+
+						dos2unix file.theirs.rb
+
+						git merge-file --stdout \
+							file.ours.rb file.common.rb file.theirs.rb > file.rb
+
+			- Compare the result of the merge:
+
+				- with our version before the merge
+
+						git diff --ours
+
+				- with their version before the merge
+
+						git diff --theirs -b
+
+					- -b used to strip out the whitespace: we are not comparing
+					  with file.theirs.rb!
+
+				- with how the file has changed from both sided
+
+						git diff --base
+
+			- Clean up the files needed for merge and no longer needed
+
+						git clean --force
+
+		- Checking Out Conflicts
+
+			- diff3 (add the base conflict marker)
+
+					git checkout --conflict=diff3 file.rb
+					vim file.rb
+
+				- Set as default
+
+					git config --global merge.conflictstyle diff3
+
+			- git checkout has the following options (can be useful for binary
+			  files - choosing only one)
+
+					--ours
+					--theirs
+
+							git checkout --theirs <file>
+							git add <file>
+							git merge --continue
+
+		- Merge Log
+
+			- Get full list of all unique commits included in either branch
+			  involved in the merge
+
+			  		git log --oneline --left-right HEAD..MERGE_HEAD
+
+			- Show commits in either side of the merge that touch a file that
+			  is currently conflicted
+
+			  		git log --oneline --left-right --merge
+
+				- get diffs to the file that ended up in conflict
+
+					git log --oneline --left-right --merge -p
+
+		- Combined Diff Format
+
+					git merge <branch>			# Conflict
+					git diff					# Now unique diff output format
+
+			- Combined Diff
+					(1) First column
+							- shows if that line is different (added/removed)
+							  between the "ours" branch and the file in the
+							  working directory
+					(2) Second column
+							- does as above for the "theirs" branch and the
+							  working directory copy
+
+			- Another way
+
+					git show
+						or
+					git log --cc -p -1
+
+		- Undoing Merges			
+
+			- Two ways
+
+				(1) Fix the references
+						- If unwanted merge commit only exists on local repo
+						- Moving branches
+
+							git reset --hard HEAD~
+
+						- Downside: rewriting history
+
+				(2) Reverse the commit
+						- Making new commit which undoes all the changes from
+						  an existing one
+
+						  	git revert --mainline 1 HEAD
+
+								- --mainline 1 indicates which parent should be
+								  kept
+
+						- Git gets confused when trying to merge the branch again
+
+							git merge <branch>	# "Already up-to-date"
+
+						- If adding work to <branch> and merge again, Git will
+						  only bring in the changes SINCE the reverted merge
+
+						  	- Best way around this: un-revert the original merge,
+							  since NOW we WANT to bring in the changes that were
+							  reverted out
+
+								git checkout master
+							  	git revert HEAD
+
+							- Then merge <branch> with master
+
+								git merge <branch>
+
+		- Other Types of Merges
+
+			- Our or Theirs Preference
+
+				- Automatically let Git choose a specific side if conflict arise
+
+						git merge -Xours   <branch>
+						git merge -Xtheirs <branch>
+
+				- Individual file merges
+
+						git merge-file --ours ...
+						git merge-file --theirs ...
+
+				- The "ours" merge strategy (different from "ours" recursive
+				  merge option)
+
+				  		git merge --strategy ours <branch>
+
+					- "Fake" merge
+						- Result of merge is exact code in current branch
+
+							git diff HEAD HEAD~
+
+			- Subtree Merging
+
+				- Idea: having two projects, one of them maps to a subdirectory
+				  of the other
+
+				- Example
+
+						git remote add rack_remote https://github.com/rack/rack
+						git fetch rack_remote --no-tags
+						git checkout -b rack_branch rack_remote/master
+
+					- master and rack_branch now contain completely different
+					  histories
+					- Pull the Rack project into the rack subdirectory of our 
+					  master branch of our main project
+
+						git checkout master
+						git read-tree --prefix=rack/ -u rack_branch
+
+					- If Rack project updates, we can pull them
+
+						git checkout rack_branch
+
+					- Now we merge the changes
+
+						git checkout master
+						git merge --squash --strategy recursive \
+								  --Xsubtree=rack rack_branch
+
+					- Get diff between content of rack subdirector and the code
+					  in rack_branch
+
+					  	git diff-tree -p rack_branch
+
+					- COmpare what is in the rack subdirectory with what the
+					  master branch on the server was the last time fetched
+
+					  	git diff-tree -p rack_remote/master
+
+
+	7.9 Git Tools - Rerere
+
+		
+		- Reuse Recorded Resolution
+		- Resolve a previously resolved conflict automatically
+		- Example
+
+			- Making sure a long-lived topic branch will ultimately merge
+			  cleanly without intermediate merge commits in commit history
+
+			  	(1) With rerere enabled
+						(a) attempt occasional merge
+						(b) resolve conflicts
+						(c) back out of the merge
+				(2) Repeat the above continuously
+						- the final merge should be easy
+
+		- Other usecases
+
+			- Keeping a branch rebased to not deal with same rebasing conflicts
+			- Taking a branch that merged and fixed a bunch of conflicts and
+			  rebase it instead
+			- Taking a bunch of evolving topic branches together into a testable
+			  head
+			  	- If the tests fail: rewind merges and re-do w/o conflicts
+
+		- Enable rerere functionality
+
+					git config --global rerere.enabled true
+
+				- Enable locally for specific repository
+
+					mkdir /path/2/repository/.git/rr-cache	# realy?
+						or better?
+					git config --local rerere.enabled true
+
+		- Example
+
+				- Setup
+
+					cat hello.rb		# this is on master
+
+						#! /usr/bin/env ruby
+
+						def hello
+							puts 'hello world'
+						end	
+
+					git checkout -b i18n-world
+					vim hello.rb
+
+						...
+							puts 'hello mundo'
+						...
+
+					git commit -am 'hello mundo'
+
+					git checkout master
+					vim hello.rb
+
+						...
+							puts 'hola world'
+						...
+
+					git commit -am 'hola world'
+
+				- Enabling rerere locally
+
+					ls .git/
+					git config --local rerere.enabled true
+
+				- Merging
+
+					git merge i18n-world	# Note: "Recorded preimage for..."
+					ls .git/				# Note: additional content!
+
+				- Check usual status
+					
+					git status
+
+				- Check recording of pre-merge state
+
+					git rerere status
+
+				- Check current state of resolution (the starting point and
+				  what it has been resolved to)
+
+				  	git rerere diff
+
+				- Check conflicted files (before, left and right versions)
+
+					git ls-files -u
+
+				- Resolve to just be "puts 'hola mundo'", then check again
+
+					git rerere diff
+
+						- In future, if Git is confrontet with a conflict in
+						  hello.rb with 'hello mundo' on one side and 'hola
+						  world' on the other side:
+						  	- It will resolve it to 'hola mundo'
+
+				- Mark as resolved and commit
+
+					git add hello.rb
+					git commit			# Note: "Recorded resolution for ..."
+
+				- Now undoing the merge and rebase		
+
+					git reset --hard HEAD^
+					git checkout i18n-world
+					git rebase master	# Note: "Resolved ... using previous
+										#		 resolution"
+
+				- Recreate the conflicted file state
+
+					git checkout --conflict=merge hello.rb
+					cat hallo.rb
+
+				- Re-resolve it
+
+					git rerere
+
+				- Add and continue rebasing
+
+					git add hello.rb
+					git rebase --continue
+
+
+	7.10 Git Tools - Debugging with Git
+
+		- File Annotation
+
+			- Check out when a found bug was introduced and why (restrict the
+			  output to a range of lines)
+
+			  		git blame -L 13,23 <file>
+
+				- ^ prefix of SHA-1: designates lines that were introduced in
+									 the repository's initial commit and have
+									 remained unchanged ever since
+
+				- Ask Git to figure out where snippets of code within it
+				  originally came from if they were copied from elsewhere
+				  (i.e., code movement)
+
+				  	git balme -C -L 141,153 <file>	# Does not work?
+
+						- Usefull if refactoring a file into multiple files
+					
+		- Binary Search
+
+			- Example
+				- Pushing out a release of code to a production environment
+				- Getting bug reports about something that wasn't happening
+				  in development environment
+				- bisect procedure
+
+					(1) Get things going
+
+							git bisect start
+
+					(2) Tell the system that the current commit you're on is
+						broken
+
+							git bisect bad
+
+					(3) Tell bisect when the last known goot state was
+
+							git bisect good <goot_commit>
+
+							git bisect goot v1.0
+
+					(4) Git checks out the middle commit between the last commit
+						and the one marked as good. Run a test: if it fails,
+						error must be introduced before, if not it means the
+						error was introduced in a later commit:
+
+							git bisect good
+
+					(5) Git again searches for the middle and we can do a test
+						again - let's say it fails this time:
+
+							git bisect bad
+
+					(6) This repeats itself until it can be determined where
+						the issue was introduced - Git plots informations about
+						the first bad commit
+
+					(7)	Reset the HEAD to not end up in a weird state
+
+							git bisect reset
+
+			- If having a script that exits with 0 if project is good and
+			  non-zero if the project is bad:
+			  	- The Process above can be fully automated
+
+					(1) List the known bad commit first and the knwon good
+						commit second
+
+							git bisect start HEAD v1.0
+
+					(2) Then let 'test-error.sh' run on each checked-out commit
+						until Git finds the first broken commit
+
+							git bisect run test-error.sh
+
+				- We can also run somthing like 'make' or 'make test' for
+				  example (i.e., whatever runs automated tests)

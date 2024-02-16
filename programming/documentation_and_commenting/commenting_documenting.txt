@@ -1,0 +1,75 @@
+WHERE
+	(1) Top of any programm file = "Header Comment"
+		- generally:
+			- who wrote the code
+			- why
+			- when
+			- what should it do
+		- important
+			(a) the author, date
+			(b) descrption of what the code in the file accomplishes
+			(c) a list of any modifiaction (bug fixes) to the file
+		- fully describe project and purpose of code
+			- high level idea or purpose
+			- what data-structures and methods are used
+	(2) Above every function = "Function Header"
+		- information about this 'subcomponent'
+		- if tere is only one function in a file
+			- function header and file header should be merged into one comment
+		- describe the purpose of a function
+		- describe the algorithm which the function implements without forcing
+		  the reader to interpret code
+		- serves to visually separate each function
+		- rule of thumb:
+			- the longer the function, the longer the comment
+	(3) In line
+		- "tricky" code
+			- not obvious what one is trying to accomplish
+		- right above or in same line
+
+EXAMPLES
+
+	C FILE HEADER
+
+		/**
+		 * File:	compute_blackjack_odds.C
+		 * Author1:	Adam Ber (adam.ber@test.com)
+		 * Author2:	Cintia Dol (cintia.dol@test.com)
+		 * Date:	Spring 2024
+		 *
+		 * Summary of File:
+		 *	
+		 *		This file contains code which simulates a blackjack game.
+		 *		Functions allow the user of the software to play against
+		 *		the "casino", or to simulate the odds of successfully
+		 *		"hitting" given any two cards.
+		 *
+		 */
+
+	C FUNCTION HEADER
+
+		/**
+		 *
+		 * void sort (int array[])
+		 *
+		 * Summary of the Sort function:
+		 *
+		 *		The Sort function, rearranges the given array
+		 *		of integers from highest to lowest
+		 *
+		 * Parameters	: array: containing integers
+		 *
+		 * Return Value : Nothing -- Note: Modifies the array "in place".
+		 *
+		 * Description:
+		 *
+		 *		This function utilizes the standard bubble sort algorithm...
+		 *		Note, the array is modified in place.
+		 *
+		 */
+
+		void
+		sort (int array[])
+		{
+		 	// code
+		}

@@ -1,0 +1,48 @@
+--------------------------------------------------------------------------------
+================================================================================
+HACKING C++
+https://hackingcpp.com/cpp/beginners_guide.html
+================================================================================
+
+--------------------------------------------------------------------------------
+Standard Library - Part 2
+--------------------------------------------------------------------------------
+
+
+	----------------------------------------------------------------------------
+	Range Copy Algorithms
+	----------------------------------------------------------------------------
+
+
+	- IMPORTANT:
+
+		- Target ranges must be able to receive all copied elements
+		- Standard algorithms don't - and in most cases can't - check if the
+		  target range is large enough
+
+
+	- copy
+
+		copy(@begin, @end, @target_begin) -> @target_end
+
+		ranges::copy(source_range, @taget_begin) -> {@in, @out}	(C++20)
+
+						   v @in  @begin v		   v @out
+				|4|5|6|7|8| |			|4|5|6|7|8| |
+
+	- copy_n
+
+		copy_n(@begin, n, @target_begin) -> @target_end (C++11)
+
+	- copy_backward
+
+		copy_backward(@begin, @end, @target_end) -> @target_begin (C++11)
+
+	- copy_if
+
+		copy_if(@begin, @end, @target, f(o)->bool) -> @target_end (C++11)
+
+					
+				auto const is_even = [](int x){ return !(x & 1); };
+				...
+				copy_if(begin(src)+2, begin(src)+7, begin(tgt), is_even);

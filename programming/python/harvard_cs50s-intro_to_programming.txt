@@ -1,0 +1,3364 @@
+================================================================================
+HARVARD CS50'S INTRODUCTION TO PROGRAMMING WITH PYTHON
+================================================================================
+
+--------------------------------------------------------------------------------
+Introduction
+--------------------------------------------------------------------------------
+
+	0 Functions, Variables
+	1 Conditionals
+	2 Loops
+	3 Exceptions
+	4 Libraries
+	5 Unit Tests
+	6 File I/O
+	7 Regular Expressions
+	8 Object-Oriented Programming
+	9 Es Cetera
+
+
+--------------------------------------------------------------------------------
+0 Functions, Variables
+--------------------------------------------------------------------------------
+
+- Functions
+- Arguments
+- Side effects
+- Bugs
+- Return values
+- Variables
+- Comments
+	- Pseudocode
+- str
+- Documentation
+
+		docs.pyhton.org
+
+- print()
+
+	print(*objects, sep' ', end='\n', file=sys.stdout, flush=False)
+
+		- Example
+
+			name = input("What's your name? ")
+			print("Hello,", name, sep=' ', end'\n')
+
+- Parameters
+	(1) Positional Parameters
+	(2) Named Parameters
+- Escaping
+- Formatstrings
+	- Example
+
+			name = input("What's your name? ")
+			print(f"hello, {name}")
+
+- Srting methods
+
+			docs.python.org/3/library/stdtypes.hetml#string-methods
+
+	- Examples
+
+		strip()
+
+			name = input("What's your name? ")
+			name = name.strip()
+
+		capitalize()
+
+			name = name.capitalize()
+
+		title()
+
+			name = name.tile()
+
+	- Concatenate methods
+
+			variable = variable.method1().method2()...
+
+	- Further methods
+
+		split()
+
+			name = input("What's your name? ")
+			first, last = name.split(sep=' ', maxsplit=1)
+			print(f"hello, {first} {last}")
+
+- int
+	- Example
+
+			x = int(input("What is x? "))
+			y = int(input("What is y? "))
+			print(x + y)
+
+- float
+	- Methods
+
+			docs.python.org/3/library/functions.html#round
+
+	- round(number[, ndigits])
+		- Example
+
+			z = round(x + y)
+
+	- Format long numbers
+
+			print(f"{z:,}")
+
+	- Specify how many digits after the comma are printed
+
+			print(f"{z:.2f}")
+
+- def
+	- Example
+
+			def main():
+				hello()
+				name = input("What's your name? ")
+				hello(name)
+
+			def hello(to="world"):					# world is default value
+				print("hello,", to)
+
+			main()
+
+- Scope
+- return
+	- Example
+
+			def main():
+				x = int(input(What's x?))
+				print("x squared is", square(x))
+
+			def square(n):
+				return n * n
+
+			main()
+
+		- Alternatives:
+
+			n ** 2
+			pow(n, 2)
+
+
+--------------------------------------------------------------------------------
+1 Conditionals
+--------------------------------------------------------------------------------
+
+- if
+	- Example
+
+			x = int(input("What's x? "))
+			y = int(input("What's y? "))
+
+			if x == y:
+				print("x is equal to y")
+			elif x < y:
+				print("x is less than y")
+			else:
+				print("x is greater than x")
+
+	- Example
+
+			x = int(input("What's x? "))
+			y = int(input("What's y? "))
+		
+			if x == y:
+				print("x is equal to y")
+			else:
+				print("x is not equal to y")
+
+- and
+	- Example
+
+			score = int(input("Score: "))
+			if score >= 90 and score <= 100:
+				print("Grade: A")
+			elif score >= 80 and score <= 90:
+				print("Grade: B")
+			...
+			else:
+				print("Grade: F")
+
+		- Better
+
+			...
+			if 90 <= score <= 100:
+				print("Grade: A")
+
+		- Even better						- This will not work
+
+			if score >= 90:						if score >= 90
+				...									...
+			elif score >= 80:					if score >= 80
+				...									...
+			else:								else:
+				...									...
+
+- Bools
+	- Example
+
+			def main():
+				x = int(input("Whats x? "))
+				if is_even(x):
+					print("Even")
+				else:
+					print("Odd")
+
+			def is_even(n):
+				if n % 2 == 0:
+					return True
+				else:
+					return False
+
+			main()
+
+		- Better
+
+			def is_even(n):
+				return True if n % 2 == 0 else False
+
+		- Even better
+
+			def is_even(n):
+				return n % 2 == 0
+
+- match
+	- Example
+
+			name = input("What's your name? ")
+
+			if name == "Harry" or name == "Hermione":
+				print("Gryffindor")
+			elif name == "Draco":
+				print("Slytherin")
+			else:
+				print("Who?")
+
+		- Better
+
+			match name:
+				case "Harry":
+					print("Gryffindor")
+				case "Hermione":
+					print("Gryffindor")
+				case "Draco":
+					print("Slytherin")
+				case _:
+					print("Who?")
+
+		- Even better
+
+			match name:
+				case "Harry" | "Hermione":
+					print("Gryffindor")
+				case "Draco":
+					print("Slytherin")
+				case _:
+					print("Who?")
+
+
+--------------------------------------------------------------------------------
+2 Loops
+--------------------------------------------------------------------------------
+
+- while
+
+	- Example
+
+			i = 3							i = 0
+			while i != 0:					while i < 3:
+				print("meow")					print("meow")
+				i = i - 1						i = i + 1
+
+		- Better
+
+			i = 3							i = 0
+			while i != 0:					while i < 3:
+				print("meow")					print("meow")
+				i -= 1							i += 1				# no i++
+
+- for
+
+	- list
+		- type of data
+	
+	- Examples
+
+			for i in [0, 1, 2]:			# Note: [...] represents lists
+				print("meow")
+
+		- range()
+
+			for i in range(3):
+				print("meow")
+
+		- "pythonic"
+
+			for _ in range(3):			# _ indicates var that isn't used later
+				print("meow")
+
+		- "pythonic"
+
+			print("meow" * 3)			
+			print("meow\n" * 3, end="")			# more pretty
+			print("meow\n" * 2 + "meow")		# also possible
+
+	- continue, break
+
+			# Ask for n as long it is not positive
+			while True:
+				n = int(input("What's n? "))
+				if n < 0:
+					continue
+				else:
+					break
+
+		- Common paradigm:
+
+			while True:
+				n = int(input("What's n? "))
+				if n > 0:
+					break
+
+	- Bringing stuff together and returning a value
+
+			def main():
+				number = get_number()
+				meow(number):
+
+			def get_number():
+				while True:
+					n = int(input("What's n? "))
+					if n > 0:
+						break
+				return n
+
+			def meow(n):
+				for _ in range(n):
+					print("meow")
+
+			main()
+
+		- Alternatively:
+
+			...
+			def get_number():
+            	while True:
+            		n = int(input("What's n? "))
+            		if n > 0:
+						return n
+			...
+
+- list
+
+	- print()
+		- Example
+
+			# List of students
+			students = ["Hermine", "Harry", "Ron"]		# List of lentgth 3
+
+			# Print particular entry
+			print(students[0])
+			print(students[1])
+			print(students[2])
+
+			# Print all entries
+			for student in students:
+				print(student)
+
+	- len()										# how long is this list
+		- Example
+
+			students = ["Hermine", "Harry", "Ron"]
+
+			for i in range(len(students)):
+				print(i + 1, students[i])		# two columns: num student
+
+- dict
+
+	- Dictionary
+	- Data structure
+		- Allows to associate keys with values
+	- Example
+
+			students = {"Hermine": "Gryffindor",
+						"Harry": "Gryffindor, 
+						"Ron": "Gryffindor",
+						"Draco": "Slytherin",
+			}
+
+			print(students["Hermine"])
+			print(students["Harry"])
+			print(students["Ron"])
+			print(students["Draco"])
+
+		- Better
+
+			...
+			for student in students:			# iterate over keys and values
+				print(student, students[student], sep=": ")
+
+	- Example
+
+				name		house		patronus
+			-----------------------------------------------
+			0	Hermione	Gryffindor	Otter
+			1	Harry		Gryffindor	Stag
+			2	Ron			Gryffindor	Jack Russel terrier
+			3	Draco		Slytherin
+
+		- None									# Represents absence of value
+
+			# Compose list of dictionaries
+			students = [
+				{"name": "Herminone", "house":"Gryffindor", "patronus": "Ottr"},
+				{"name": "Harry", "house":"Gryffindor", "patronus": "Stag"},
+				{"name": "Ron", "house":"Gryffindor", "patronus": "JRT"},
+				{"name": "Draco", "house":"Slytherin", "patronus": None},
+			]
+
+			for student in students:
+				print(student["name"], student["patronus"], sep=", ")
+
+- Abstractions
+
+	- Example
+			
+			# Print a block of 3 #'s (horizontally)
+			def main():
+				print_column(3)
+
+			def print_column(height):
+				for _ in range(height):
+					print("#")
+
+			main()
+
+		- Alternative
+
+			...
+			def print_column(height):
+				print("#\n" * height, end="")
+			...
+
+	- Example
+
+			# Print four ? (vertically)
+			def main():
+				print_row(4)
+
+			def print_row(width):
+				print("?" * width)
+
+			main()
+
+	- Example
+
+			# Print 3x3 square
+			def main():
+				print_square(3)
+
+			def print_square(size):
+
+				# For each row in square
+				for i in range(size):
+
+					# For each brick in row
+					for j in range(size):
+
+						# Print brick
+						print("#", end="")
+
+					# Add newline at end of row
+					print()
+
+			main()
+
+		- Tighten up code
+
+			...
+			def print_square(size):
+				for i in range(size):
+					print("#" * size)
+			...
+
+		- Using another function
+
+			...
+			def print_square(size):
+				for i in range(size):
+					print_row(size)
+
+			def print_row():
+				print("#" * width)
+			...
+
+
+--------------------------------------------------------------------------------
+3 Exceptions
+--------------------------------------------------------------------------------
+
+- SyntaxError
+- Run-time Error
+- ValueError
+		- Example
+
+			x = int(input("What's x? "))
+			print(f"x is {x}")
+			# Outputs a ValueError if input is a string
+
+- Testing
+	- Testing corner cases is important
+	- Evaluate what errors can/could happen
+		- React specificly to those - not to errors "in general"
+- Error Handling
+
+	- try, except
+
+		- Example
+
+			try:
+				x = int(input("What's x? "))
+				print(f"x is {x}")
+			except ValueError:					# Something exceptional happens
+				print("x is not an integer")
+
+		- Better
+			- try only one "thing" at a time!
+
+	- NameError: name 'x' is not defined
+
+			try:
+				x = int(input("What's x? "))
+			except ValueError:
+				print("x is not an integer")
+
+			print(f"x is {x}")
+			# Error is interrupting the definition process if we input "cat"
+
+	- else
+
+			try:
+				x = int(input("What's x? "))
+			except ValueError:
+				print("x is not an integer")
+			else:								# If nothing goes wrong, do that
+				print(f"x is {x}")
+
+- Don't quit the programm immediately
+
+	- while, break
+
+			while True:
+				try:
+					x = int(input("What's x? "))
+				except ValueError:
+					print("x is not an integer")
+				else:
+					break
+					
+			print(f"x is {x}")
+
+		- Also possible
+
+			while True:
+				try:
+					x = int(input("What's x? "))
+					break
+				except ValueError:
+					print("x is not an integer")
+
+			print(f"x is {x}")
+
+- Using a function
+
+			def main():
+				x = get_int()
+				print(f"x is {x}")
+
+			def get_int():
+				while True:
+					try:
+						x = int(input("What's x? "))
+					except ValueError:
+						print("x is not an integer")
+					else:
+						break
+				return x
+
+			main()
+			
+		- Better
+
+				...
+					else:
+						return x		# return does break implicitly
+
+		- Refinement
+
+				...
+					try:
+						x = int(input("What's x? "))
+						return x
+					except ValueError:
+						print("x is not an integer")
+
+				main()
+
+		- Further refinement (tightening up the code even more)
+
+			...
+			def get_int():
+				while True:
+					try:
+						return int(input("What's x? "))
+					except ValueError:
+						print("x is not an integer")
+
+			main()
+
+	- pass				# We want to catch it but don't want to do anything
+
+			def get_int():
+				while True:
+					try:
+						return int(input("What's x? "))
+					except ValueError:
+						pass
+
+- Making the program more usable
+
+			def main():
+				x = get_int("What's x? ")			# We r passing the question
+				print(f"x is {x}")
+
+			def get_int(prompt):
+				while True:
+					try:
+						return int(input(prompt))
+					except ValueError:
+						pass
+
+			main()
+			
+- Raising exceptions
+
+	- raise
+
+
+--------------------------------------------------------------------------------
+4 Libraries
+--------------------------------------------------------------------------------
+
+- modules          					# Library with one or more features
+
+	- random						# in random.py
+
+		- import
+
+			# Flipping a coin
+
+			import random			# Importing everything from the module
+
+			coin = random.choice(["heads", "tails"])
+			print(coin)
+
+		- from
+
+			from random import choice		# Loading function named 'choice'
+											# into current namespace
+			coin = choice(["heads", "tails"])
+			print(coin)
+
+		- randint()							# Print random num in between args
+
+			import random
+
+			number = random.randint(1, 10)
+			print(number)
+
+		- shuffle()							# Shuffle a list
+
+			import random
+
+			cards = ["jack", "queen", "king"]
+			random.shuffle(cards)
+			for card in cards:
+				print(card)
+
+	- statistics
+
+		- mean()
+
+			import statistics
+
+			print(statistics.mean([100, 90]))
+
+- Command-line argument
+
+	- sys
+
+		- argv()							# Argument vector
+
+			$ vi name.py
+
+				import sys
+
+				print("hello, my name is", sys.argv[1])
+
+			$ python name.py david
+			hello, my name is david
+
+		- IndexError: list index out of range
+
+			- If don't supply the program above with an argument
+				- There is nothing at location 1 in the list
+				- Handle error
+
+					import sys
+
+					try:
+						print("hello, my name is", sys.argv[1])
+					except IndexError:
+						print("Too few arguments")
+
+				- Alternative
+
+					import sys
+
+					if len(sys.argv) < 2:
+						print("Too few arguments")
+					elif len(sys.argv) > 2:
+						print("Too many arguments")
+					else
+						print("hello, my name is", sys.argv[1])
+
+- Keeping error handling separate from code
+
+		- exit()
+
+				import sys
+
+				if len(sys.argv) < 2:
+					sys.exit("Too few arguments")
+				elif len(sys.argv) > 2:
+					sys.exit("Too many arguments")
+
+				print("hello, my name is", sys.argv[1])
+
+- Working with multiple arguments
+
+				import sys
+
+				if len(sys.argv) < 2:
+					sys.exit("Too few arguments")
+
+				for arg in sys.argv:
+					print("hello, my name is", arg)
+
+				# Adds the name of the program as well
+
+		- slices			# Take a subset of a data structure (e.g. a list)
+
+				import sys
+
+				if len(sys.argv) < 2:
+					sys.exit("Too few arguments")
+
+				for arg in sys.argv[1:]
+					print("hello, my name is", arg)
+
+- packages
+	- 3rd party libraries
+	- pypi.org
+		- e.g. cowsay
+	- pip
+
+			$ pip install cowsay				# cowsay is the package
+
+		- Example
+
+				import cowsay
+				import sys
+
+				if len(sys.argv) == 2:
+					cowsay.cow("hello, " + sys.argv[1])
+
+	- APIs
+
+			$ pip install requests
+
+		- json
+
+			- URL:
+			  https://itunes.apple.com/search&entity=song&limit=1&term=weezer
+			- JSON file
+			- Pretending to be a browser
+
+				import json
+				import requests
+				import sys
+
+				if len(sys.argv) != 2:
+					sys.exit()
+
+				# Chose the name of the band with argv[1]
+				response = requests.get("https://...&term=" + sysargv[1])
+				print(json.dumps.(response.json(), indent=2))
+
+			- We want to print out all songs for a specific band
+
+				import json
+				import requests
+				import sys
+
+				if len(sys.argv) != 2:
+					sys.exit()
+
+				# Chose the name of the band with argv[1]
+				response = requests.get("https://...&term=" + sysargv[1])
+
+				o = response.json()					# o for object
+				# results and trackName are keys in the json file
+				for result in o["results"]:
+					print(result["trackName"])
+
+- Make own module/package
+
+			$ vi sayings.py
+
+				def main():
+					hello("world")
+					goodbye("world")
+
+				def hello(name):
+					print(f"hello, {name}")
+
+				def goodbye(name):
+					print(f"goodbye, {name}")
+					
+				if __name__ == "__main__":
+					main()
+
+			$ vi say.py
+
+				import sys
+
+				from sayings import hello
+
+				if len(sys.argv) == 2:
+					hello(sys.argv[1])
+
+	__name__
+
+		- Dunder name
+			- Double UNDERscores
+		- Special variable
+			- Python assigns a different value to it depending on how its
+			  containing script executes:
+			  	(1) If running the script directly:
+						- Python sets the __name__ variable to '__main__'
+				(2) If importing the file as module:
+						- Python sets the module name to __name__ variable
+
+
+--------------------------------------------------------------------------------
+5 Unit Tests
+--------------------------------------------------------------------------------
+
+- Calculator
+
+			$ vi calculator.py
+
+				def main():
+					x = int(input("What's x? "))
+					print("x squared is", square(x))
+
+				def square(n):
+					return n * n
+
+				if __name__ == "__main__":
+				main()
+
+- Test the calculator
+
+			$ vi test_calculator.py
+
+				from calculator import square
+
+				def main():
+					test_square()
+
+				def test_square():
+					if square(2) != 4:
+						print("2 squared was not 4")
+					if square(3) != 9:
+						print("3 squared was not 9")
+
+				if __name__ == "__main__":
+				main()
+
+	- assert						# Assert that something is true (bool)
+
+				def test_square():
+					assert square(2) == 4
+					assert square(3) == 9
+
+		- Handle AssertionError
+
+				def test_square():
+					try:
+						assert square(2) == 4
+					except AssertionError:
+						print("2 squared was not 4")
+					try:
+						assert square(3) == 9
+					except AssertionError:
+						print("3 squared was not 9")
+
+- unittest (builtin unit testing framework)
+- pytest (3rd party library)
+
+	- Installation
+
+			$ pip install pytest
+
+	- Test programm
+
+			$ vi test_calculator.py
+
+				from calculator import square
+
+				def test_square():
+					assert square(2) == 4
+					assert square(3) == 9
+					assert square(-2) == 4
+					assert square(-3) == 9
+					assert square(0) == 0
+
+			$ pytest test_calculator.py
+			# First assertion failing is shown; the other tests are not run
+
+		- Better
+			- Breaking up tests in parts
+
+				def test_positive():
+					assert square(2) == 4
+					assert square(3) == 9
+
+				def test_negative():
+					assert square(-2) == 4
+					assert square(-3) == 9
+
+				def test_zero():
+					assert square(0) == 0
+
+			$ pytest test_calculator.py
+
+	- Passing a str to test
+
+				import pytest
+				...
+
+				def test_str():
+					with pytest.raises(TypeError):
+						square("cat")
+
+- Testing another program
+
+			$ vi hello.py
+
+				def main():
+					name = input("What's your name? ")
+					hello(name)
+
+				def hello(to="world"):
+					print("hello,", to)
+
+				if __name__ == "__main__"
+					main()
+					
+			$ test_hello.py
+
+				from hello import hello
+
+				def test_hello():
+					assert hello("David") == "hello, David"	# will not work:
+															# hello() does not
+															# return a value
+					hello()	== "hello, world!"
+
+	- For bigger programs: better to have no side-effects (use 'return')
+
+				def main():
+					name = input("What's your name? ")
+					print(hello(name))
+
+				def hello(to="world"):
+					return f"hello, {to}"				# return f-string
+
+				...
+
+		- Now running test from above works: we have a return value to test
+
+			$ pytest test_hello.py
+
+		- Better testing practice
+
+				def test_default():
+					assert hello()	== "hello, world!"
+
+				def test_argument():
+					assert hello("David") == "hello, David"
+
+		- Loop over names
+
+				def test_argument():
+					for name in ["Hermione", "Harry", "Ron"]
+						assert hello(name) == f"hello, {name}"
+
+- Using directories
+
+			$ mkdir test
+			$ vi test/test_hello.py
+
+				from hello import hello
+
+				def test_default():
+					assert hello() == "hello, world"
+
+				def test_arguement():
+					assert hello("David") == "hello, David"
+
+	- __init__
+
+			$ vi test/__init__.py		# Indicates Python: the dir is a package
+
+	- Now running the test on the whole directory
+
+			$ pytest test
+
+
+--------------------------------------------------------------------------------
+6 File I/O
+--------------------------------------------------------------------------------
+
+- list
+
+	- append, sorted
+
+			$ vi names.py
+
+				# Program collecting names
+				names = []							# Empty list
+
+				for _ in range(3):
+					name = input("What's your name? ")
+					names.append(name)
+				
+				for name in sorted(names):
+					print(f"hello, {name}")
+
+- Save information into a file
+
+	- open()
+
+				name = input("What's your name? ")
+
+				file = open("names.txt", "w")				# Open and recreate
+				file.write(name)							# Write to file
+				file.close()								# Close the file
+
+			- We want to append, not overwrite
+
+				...
+				file = open("names.txt", "a")				# Append
+				...
+
+			- Adding a newline
+
+				...
+				file.write(f"{name}\n")
+				...
+
+	- Better design (more pythonic)
+
+		- with								# open and automatically close
+
+				name = input("What's your name? ")
+
+				with open("names.txt", "w") as file:		# file is our var
+					file.write(name)
+
+	- read ("r")
+
+				# Read existing file
+
+				with open("names.txt", "r") as file:
+					lines = file.readlines()			# List of all lines
+
+				for line in lines:
+					print("hello,", line.rstrip())		# Strippin off newline
+
+			- Better design
+
+				with open("names.txt", "r") as file:
+					for line in file:
+						print("hello,", line.rstrip())
+
+			- Sort before printing ("better design" will not work)
+
+				names = []
+
+				with open("names.txt") as file:			# Default: "r"
+					for line in file:
+						names.append(line.rstrip())
+
+				for name in sorted(names, reverse=True):
+					print(f"hello, {name}")
+
+			- More pythonic? If it's only about the sorting before printing
+
+				with open ("names.txt") as file:
+					for line in sorted(file):
+						print("hello", line.rstrip())
+
+- CSV
+
+			$ vi students.csv				# Comma Separated Values
+
+				Herminoe,Gryffindor
+				Harry,Gryffindor
+				Ron,Gryffindor
+				Draco,Slytherin
+
+		- split()							# Returns a list
+
+			$ vi students.py
+
+				# Parsing a CSV file
+
+				with open("students.csv") as file:
+					for line in file:
+						row = line.rstrip().split(",")
+						print(f"{row[0]} is in {row[1]}")
+
+		- "Unpacking" a list into multiple variables at once (more readable?)
+
+						...
+						name, house = line.rstrip().split(",")
+						print(f"{name} is in {house}")
+				
+		- We want to sort
+
+				students = []
+
+				with open("students.csv") as file:
+					for line in file:
+						name, house = line.rstrip().split(",")
+						students.append(f"{name} is in {house}")
+
+				for student in sorted(students):
+					print(student)
+
+			- Better design (using a dictionary)
+
+				students = []
+
+				with open("students.csv") as file:
+					for line in file:
+						name, house = line.rstrip().split(",")
+						student = {}
+						student["name"] = name
+						student["house"] = house
+						students.append(student)
+
+				for student in students:
+					print(f"{student['name']} is in {student['house']}")
+					# single quotes are needed here, to not terminate "
+
+			- Different approach
+
+				students = []
+
+				with open("students.csv") as file:
+					for line in file:
+						name, house = line.rstrip().split(",")
+						student = {"name": name, "house": house}
+						students.append(student)
+
+				...
+
+	- sorted(..., key=...)		# Passing a function as argument to another func
+
+		- Finally sorting (a dictionary)?
+
+				...
+
+				def get_name(student):
+					return student["name"]
+
+				for student in sorted(students, key=get_name):
+					print(f"{student['name']} is in {student['house']}")
+
+	- Lambda function			# A function that has no name (used once)
+
+			- Tighten the code up by passing a lambda function to sorted()
+
+				
+				students = []
+
+				with open("students.csv") as file:
+					for line in file:
+						name, house = line.rstrip().split(",")
+						student = {"name": name, "house": house}
+						students.append(student)
+
+				for student in sorted(students, \
+				key=lambda student: student["name"]):
+					print(f"{student['name']} is in {student['house']}")
+
+	- Using another csv file for the program above
+
+			$ born_in.csv
+
+				Harry,Number Four, Privet Drive
+				Ron,The Burrow
+				Draco,Malfoy Manor
+
+		- ValueError: too many values to unpack (expected 2)
+			- Problem line:
+
+				name, house = line.rstrip().split(",")
+	
+- Using the CSV library
+
+	- csv module
+
+		- csv.reader()				# Returns lists
+
+				import csv
+				
+				students = []
+
+				with open("born_in.csv") as file:
+					reader = csv.reader(file)			# Read a CSV file
+					for row in reader:
+						students.append({"name": row[0], "home": row[1]})
+
+				for student in sorted(students, \
+				key=lambda student: student["name"]):
+					print(f"{student['name']} is in {student['house']}")
+
+			- Even better?
+
+				...
+				with open("born_in.csv") as file:
+					reader = csv.reader(file)
+					for name, home in reader:
+						students.append({"name": name, "home": home})
+				...
+
+	- Updating born_in.csv (adding name of columns)
+
+				name,home							# Important for DictReader()
+				Harry,"Number Four, Privet Drive"
+				Ron,The Burrow
+				Draco,Malfoy Manor
+
+		- csv.DictReader()			# Returns dictionaries
+
+				import csv
+
+				students = []
+
+				with open("born_in.csv") as file:
+					reader = csv.DictReader(file)
+					for row in reader:
+						students.append({"name": row["name"], \
+						"home": row["home"]})
+
+				for student in sorted(students, \
+				key=lambda student: student["name"]):
+					print(f"{student['name']} is in {student['house']}")
+
+			- In this case possible (bcause dictionary!)
+
+				...
+				with open("students.csv") as file:
+					reader = csv.DictReader(file)
+					for row in reader:
+						students.append(row)
+				...
+
+	- Writing (to) a CSV file
+
+		- csv.writer()
+
+			$ vi students.csv
+
+				name,home
+
+			$ vi students.py
+
+				import csv
+
+				name = input("Name? ")
+				home = input("Home? ")
+
+				with open("students.csv", "a") as file:
+					writer = csv.writer(file)
+					writer.writerow([name, home])
+
+		- csv.DictWriter()		# Writing a dictionary rather than a row
+
+			$ vi students.csv
+
+				name,home
+
+			$ vi students.py
+
+				import csv
+
+				name = input("Name? ")
+				home = input("Home? ")
+
+				with open("students.csv", "a") as file:
+					writer = csv.DictWriter(file, fieldnames=["name", "home"])
+					writer.writerow({"name": name, "home": home})
+
+- Binary Files
+
+	- PIL (library)
+
+				pillow.readthedocs.io
+
+		- Perform operations on image files
+
+			- Image.open(), save()
+
+				$ ls
+				costume1.gif	costume2.gif		# "Static" pics
+
+				$ vi costumes.py
+
+					# Creating animated gif
+
+					import sys
+					from PIL import Image
+
+					images = []
+
+					for arg in sys.argv[1:]:		# Exclude program name
+						image = Image.open(arg)
+						images.append(image)
+
+					# The following is for two images only?
+					images[0].save(
+						"costumes.gif", save_all=True, \
+						append_images=[images[1]], duration=200, \
+						loop=0
+					)
+
+
+--------------------------------------------------------------------------------
+7 Regular Expressions
+--------------------------------------------------------------------------------
+
+- regexes
+
+	- Example
+
+				$ vi validate.py
+
+					email = input("What's your email? ").strip()
+
+					if "@" in email:
+						print("Valid")
+					else:
+						print("Invalid")
+
+		- Improving
+
+					if "@" in email and "." in email:
+						print("Valid")
+					else:
+						print("Invalid")
+
+		- Bit more logic
+
+					email = input("What's your email? ").strip()
+
+					username, domain = email.split("@")
+
+					if username and "." in domain:		# Care, means: (1)
+						print("Valid")
+					else:
+						print("Invalid")
+
+					# (1) if (username is non-empty) and ("." in domain)
+
+				- Making it clear
+
+					...
+					if (username) and ("." in domain):
+					...
+
+		- More precise
+
+			- endswith()
+
+					...
+					if username and domain.endswith(".edu")
+					...
+
+				- Still problematic: e.g., something@.edu is valid?
+
+- re library
+
+		- re.search(pattern, string, flags=0)
+
+					import re
+
+					email = input("What's your email? ").strip()
+
+					if re.search("@", email):
+						print("Valid")
+					else:
+						print("Invalid")
+
+			- Symbols
+
+					.		any character except a newline
+					*		0 or more repetitions
+					+		1 or more repetitions
+					?		0 or 1 repetition
+					{m}		m repetitions
+					{m,n}	m-n repetitions
+
+			- Improvement
+
+					...
+					if re.search(".+@.+", email):
+					...
+
+				- Equivalent
+
+					...
+					if re.search("..*@..*", email):
+					...
+
+			- Ending with .edu
+
+					...
+					if re.search(r".+@.+\.edu", email):		# r for raw-string
+					...
+
+			- Further symbols
+
+					^	matches the start of the string
+					$	matches the end of the string just before newline
+
+			- More precise
+
+					...
+					if re.search(r"^.+@.+\.edu$", email):
+					...
+
+			- Further symbols
+
+					[]	set of characters
+					[^]	complementing the set
+
+			- We want everything but an @ sign instead of . (only one @ allowed)
+			
+					...
+					if re.search(r"^[^@]+@[^@]+\.edu$", email):
+					...
+
+			- Next improvement
+
+					...
+					if re.search(r"^[a-zA-Z0-9_]+@[a-zA-Z0-9_]+\.edu$", email):
+					...
+
+			- Builtin shortcuts
+
+				- \w	..alpha-numeric values
+
+					...
+					if re.search(r"^\w+@\w+\.edu$", email):
+					...
+
+			- Partial list of builtins
+
+					\d	..decimal digit
+					\D	..not a decimal digit
+					\s	..whitespace characters
+					\S	..not a whitespace character
+					\w	..word character [a-zA-Z0-9_]
+					\W	..not a word character
+
+			- OR	(..|..|..)
+
+					...
+					if re.search(r"^\w+@\w+\.(edu|com)$", email):
+					...
+					
+			- Grouping
+
+					A|B		..either A or B
+					(...)	..a group
+					(?:...)	..non-capturing version
+
+				- Example
+
+					(\w|\s)	..word character or whitespace character
+
+			- Solving upper-/lowercase problems
+
+					...
+					email = input("What's your email? ").strip().lower()
+					...
+
+				- Alternatively
+
+					...
+					if re.search(r"^\w+@\w+\.(edu)$", email.lower()):
+					...
+
+				- Another mechanism: re.search(... flags=...)
+
+					re.IGNORECASE		# Ignoring case of input
+					re.MULTILINE		# e.g. for paragraphs
+					re.DOTALL			# dot is any character PLUS \n
+
+				- For our problem
+
+					...
+					if re.search(r"^\w+@\w+\.(edu)$", email, re.IGNORECASE):
+					...
+
+			- Next improvement (allow subdomain)
+
+					...
+					if re.search(r"^\w+@(\w+\.)?\w+\.(edu)$", \
+					email, re.IGNORECASE):
+					...
+
+		- re.match(pattern, string, flags=0)		# matches from start (^)
+		- re.fullmatch(pattern, string, flags=0)	# from start to end (^...$)
+
+- Cleaning up the users input
+
+			$ format.py
+
+				name = input("What's your name? ").strip()
+
+				print(f"hello, {name}")
+
+		- Let's say input from user is "Lastname, Name"
+
+				name = input("What's your name? ").strip()
+
+				if "," in name:
+					last, first = name.split(", ")
+					name = f"{first} {last}"
+				print(f"hello, {name}")
+
+			- Still problematic:
+				- Name Lastname, Jr
+				- Lastname,Name
+				- split() does not take RE (e.g. split(", ?")
+
+		- Improvement (using () to capture things)
+
+				import re
+
+				name = input("What's your name? ").strip()
+				matches = re.search(r"^(.+), (.+)$", name)
+
+				if matches:
+					last, first = matches.groups()
+					name = f"{first} {last}"
+				print(f"hello, {name}")
+
+			- groups()
+
+				- Get all groups of matches
+				- Captured values (i.e. those in ()) are returned
+
+		- Getting specific groups back
+
+				...
+				if matches:
+					last = matches.group(1)			# First () in re-string
+					first = matches.group(2)		# Second () in re-string
+					name = f"{first} {last}"
+				...
+
+			- Tighten it up
+
+				...
+				if matches:
+					name = matches.group(2) + " " + matches.group(1)
+				...
+
+- Relatively new to Python
+
+		- Instead of
+
+				...
+				matches = re.search(r"..." ...)
+				if matches:
+					...
+
+			- Using := (Walrus Operator: assigning and ask bool question)
+
+				...
+				if matches := re.search(r"..." ...):
+					name = matches.grou(2) + " " + matches.group(1)
+				print(f"hello, {name}")
+
+- Extracting information
+
+	- replace()
+
+			$ vi twitter.py
+
+				# Extract user name from URL
+
+				url = input("URL: ").strip()
+
+				username = url.replace("https://twitter.com/", "")
+
+				print(f"Username: {username}")
+
+	- removeprefix()
+
+				...
+				username = url.removeprefix("https://twitter.com/", "")
+				...
+				
+	- Use RE's
+
+		- re.sub(patter, repl, string, count=0, flags=0)
+
+				import re
+
+				url = input("URL: ").strip()
+
+				username = re.sub(r"^(https?://)?(www\.)?twitter\.com/", "",\
+				url)
+				print(f"Username: {username}")
+
+		- re.search()
+
+				import re
+
+				url = input("URL: ").strip()
+
+				# we are capturing the username with (.+) before $
+				matches = re.search(r"^https?://(www\.)?twitter\.com/(.+)$", \
+				url, re.IGNORECASE)
+
+				if matches:
+					print(f"Username:", matches.group(2))
+
+			- Tighten up with Walrus Operator
+
+				...
+				if matches := re.search(r"...", url, re.IGNORECASE)
+					print(f"Username:", matches.group(2))
+
+			- Using the non-capturing version of grouping (?:...)
+
+				...
+				# Yes, we are using () to group, but don't capture it!
+				if matches := re.search(r"^https?://(?:www\.)?twitter...")
+					print(f"Username:", matches.group(1))
+
+		- Twitter only supports certain chars for the name
+
+				...
+				if matches := re.search(r"^https?...\.com/([a-zA-Z0-9_]+)", \
+				url, re.IGNORECASE):
+					...
+
+		- re.split()
+		- re.findall()
+
+
+--------------------------------------------------------------------------------
+8 Object-Oriented Programming
+--------------------------------------------------------------------------------
+
+- Paradigms
+	- e.g., procedural, functional, object-oriented
+
+- Procedural
+
+			$ vi student.py
+
+				name = input("Name: ")
+				house = input("House: ")
+				print(f"{name} from {house}")
+
+	- Next step
+
+				def main():
+					name = get_name()
+					house = get_house()
+					print(f"{name} from {house}")
+
+				def get_name():
+					return input("Name: ")
+
+				def get_house():
+					return input("House: ")
+
+				if __name__ == "__main__"
+					main()
+
+	- Maybe cleaner with another function? get_student()
+
+				def main():
+					name, house = get_student()
+					print(f"{name} from {house}")
+
+				def get_student():
+					name = input("Name: ")
+					house = input("House: ")
+					return name, house			# We actually return a tuple,
+												# not two separate values
+				if __name__ == "__main__"
+					main()
+
+	- tuple
+		- Type of data
+		- Immutable (values can't be changes)
+		- Can be nested (like lists, dictionaries)
+		- Examples
+
+					...
+					return name, house
+					...
+
+		- More explicit
+
+					...
+					return (name, house)		# Indicates: "one" value
+					...
+
+			- Implication to our program above
+
+				def main():
+					student = get_student()		# instead of name, house
+					print(f"{student[0]} from {student[1]}")
+
+				def get_student():
+					...
+					return (name, house)
+				...
+
+		- Immutablitiy
+
+				def main():
+					student = get_student()
+					if student[0] == "Padma":
+						student[1] = "Ravenclaw"		# Will not work
+					print(f"{student[0]} from {student[1]}")
+
+				def get_student():
+					name = input("Name: ")
+					house = input("House: ")
+					return (name, house)
+				
+				if __name__ == "__main__":
+					main()
+
+				# Input "Padma": TypeError: 'tuple' object does not support
+				#	item assignment
+
+	- Using a list (instead of a tuple) if mutability is what we want
+
+				def get_student():
+					...
+					return [name, house]		# Indicates a list (mutable)
+				...
+
+	- Using a dictionary to associate values with specifc keys
+
+				def main():
+					student = get_student()
+					print(f"{student['name']} from {student['house']}")
+
+				def get_student():
+					student = {}				# Initialize empty dictionary
+					student["name"] = input("Name: ")
+					student["house"] = input("House: ")
+					return student
+				...
+
+		- Tighten the code up
+
+				def get_student():
+					name = input("Name: ")
+					house = input("House: ")
+					return {"name": name, "house": house}
+				...
+
+		- Using the mutability of a dictionary
+
+				def main():
+					student = get_student()
+					if student["name"] == "Padma":
+						student["house"] = "Ravenclaw"
+				...
+
+- Would be nice to have a data type called "student"
+	- classes
+		- "invent" own data types and give them a name
+		- Have attributes
+			- Variables inside of an object
+			- Can be of any data type
+		- Are mutable
+			- But can be made immutable
+		- The classname is also callable as a function!
+		- Example
+		
+				class Student				# Convention: capitalized first letr
+					...
+
+				def main():
+					student = get_student()
+					print(f"{student.name} from {student.house}")
+
+				def get_student():
+					student = Student()
+					student.name = input("Name: ")		# Using attribute name
+					student.house = input("House: ")
+					return student
+				...
+
+	- objects
+
+		- Create an object/instance ("student") of a class ("Student")
+
+					...
+					student = Student()		# Instantiating an object of a class
+					...
+
+	- Standardizing what attributes can be and what kind of values they can be
+	  set to
+
+	  			...
+				def get_student():
+					name = input("Name: ")
+					house = input("House: ")
+					# Constructor call (constructs/instantiates student object):
+					student = Student(name, house)		# Call Student function
+														# (= our class)
+				...
+
+	- methods
+
+		- __init__							# Dunder init method
+			- Is an instancemethod
+			- Called "Initialization Method"
+			- Automatically called by Python when object is constructed
+				- Stores values into the object
+					- Passes in a reference to (argument) that represents the
+					  current object just constructed in memory
+			- Initilizing the contents of an object from a class
+				- "adding instance variables to objects"
+			- Create instance variable in an object/instance
+
+				class <calss_name>:
+					def __init__(self, var1, var2, ...):
+						self.<instance_va1> = var1
+						self.<instance_va2> = var2
+
+			- Example
+
+				class Student:
+					def __init__(self, name, house):	
+						self.name = name
+						self.house = house
+		
+			- self
+				- Naming convention
+					- Could be any other name
+				- Gives access to current object created
+				- lists can be used?
+
+						self.names = [...]		# ??
+
+		- __new__
+			- Creates an empty object in memory
+			- Not needed to be manipulated?
+				- __init__ initializes objects (nothing more needed)
+
+	- Just tighten up the code
+
+					def get_student():
+						name = input("Name: ")
+						house = input("House: ")
+						return Student(name, house)
+
+	- Checking for errors (validate values)
+		- Keep related code together
+
+				- Not good idea
+				
+					class Student:
+						def __init__(self, name, house):
+							# If the name is blank (if name == "")
+							if not name:
+								return None			# not an option: Object
+													# exists already!
+
+				- Further not a good idea
+					- Exit program just because of invalid input?
+						- What about data in memory?
+
+							...
+							if not name:
+								return sys.exit("Missing name")
+							...
+
+			- Signal an error
+
+				- raise
+					- Raising own exceptions
+						- Create an own error
+
+							...
+							if not name:
+								raise ValueError("Missing name")
+							...
+
+					- Catching the error with try-except
+
+						...
+						def get_student():
+							name = input("Name: ")
+							house = input("House: ")
+							try:
+								return Student(name, house)
+							except Value:
+								...							# handle
+						...
+
+			- Problem with house (only specific values allowed)
+
+					class Student:
+						def __init__(self, name, house):
+							...
+							if house not in ["Gryffindor", \
+											 "Hufflepuff", \
+											 "Ravenclaw", \
+											 "Syltherin"]
+								raise ValueError("Invalid house")
+							...
+
+	- Making an instance variable optional by definint default value
+		- Make house optional
+
+				class Student:
+					def __init(self, name, house=None):
+					...
+
+	- Own error messages
+
+					...
+					if not name:
+						raise ErikError("...")
+					...
+
+	- Improving our program?
+
+		- Error
+
+					...
+					def main():
+						student = get_student()
+						print(student)
+					...
+
+					# Output: __main__ .Student object at 0x102733e80
+
+		- __str__
+
+			- Called by the class if string is wanted
+
+				class Student:
+					def __init__(self, name, house):
+						...
+
+					def __str__(self):
+						return f"{self.name} from {self.house}"
+
+				...
+				def main()
+					student = get_student()
+					print(student)				# Triggers __str__
+				...
+
+	- Creating our own method
+		- Method = functino in a class
+			- Takes always self as argument
+
+				class Student:
+					def __init__(self, name, house, patronus):
+						...
+						self.patronus = patronus
+					...
+					def charm(self):
+						match self.patronus:
+							case "Stag":
+								return "=)"
+							case "Otter":
+								return ";)"
+							case "Jack Russel Terrier":
+								return "=D"
+							case _:
+								return "/"
+
+				def main():
+					student = get_student()
+					print("Expecto Patronum!")
+					print(student.charm())
+				...
+				def get_student():
+					...
+					patronus = input("Patronus: ")
+					return Student(name, house, patronus)
+				...
+				main()
+
+	- We can access instance variables by using dot-notation
+
+		- Example
+
+				...
+				def main():
+					student = get_student()
+					# Changing the value for house after the input
+					student.house = "Number Four, Privet Drive"
+					print(student)
+				...
+
+- Properties
+	- Is an attribute
+	- Used for safety meassures
+
+		- @property
+
+			- decorators
+				- Functions that modify the behavior of other functions
+				- Used to define properties?
+
+					class Student:
+						def __init__(self, name, house):
+							...
+						def __str__(self):
+							...
+
+						# Getter: function in a class that gets something
+						def house(self):
+							return self.house
+
+						# Setter: function in a class that sets something
+						def house(self, house):
+							if house not in ["Gryffindor", \
+											 "Hufflepuff", \
+											 "Ravenclaw", \
+											 "Slytherin"]
+								raise ValueError("Invalid")
+							self.house = house
+						...
+
+				- We want to require that:
+						(1) in order to access an attribute you go through some
+							function
+						(2) in order to set some attribute you go through some
+							function
+					- Getter and Setter are used
+						- When using 'student.house' the Setter function
+						  defined above is called automatically
+				- Using the decorator to tell Python to treat certain methods
+				  as Getter and others as Setter
+
+				  	class Student:
+						...
+
+						@property					# Decorator defining Getter
+						def house(self):
+							...
+
+						@house.setter				# Decorator defining Setter
+						def house(self, house):
+							...
+
+				- We no longer need the "old" error check
+
+						def __init__(self, name, house):
+							...
+							if house not in ["Gryffindor", \
+											 "Hufflepuff", \
+											 "Ravenclaw", \
+											 "Syltherin"]
+								raise ValueError("Invalid house")
+							...
+
+					- Because this also calls the Setter:
+
+						def __init__(self, name, house):
+							...
+								self.house = house
+						...
+
+					- Error Check is kept in the Setter
+
+				- We have colliding names
+
+						def __init__(self, name, house):
+							...
+								self.name = name		# Instance variable
+								self.house = house
+						...
+						
+					- We can not have instance variables named the same way as
+					  methods!
+
+						@property
+						def house(self):
+							...
+
+						@house.setter
+						def house(self, house):
+							...
+
+					- Conventional fix:
+						- We leave the following, so that assignment also goes
+						  through the Setter:
+
+							def __init__(self, name, house):
+								...
+									self.house = house
+								...
+
+						- But put an underscore before instance variable name
+
+							@property
+							def house(self):
+								return self._house
+
+							@house.setter
+							def house(self, house):
+								...
+								self._house = house
+
+						- Property is called: house
+						- Instance variable: _house
+
+				- Now we get ValueError: Invalid house with:
+					- Setter method does not allow this change to the variable
+
+							def main():
+								student = get_student()
+								student.house = "Number Four, Privet Drive"
+								...
+
+		- We want to define a property for name aswell
+
+							...
+							@property
+							def name(self):
+								return self._name
+
+							@name.setter
+							def name(self, name)
+								if not name:
+									raise ValueError("Missing name")
+								self._name = name
+							...
+
+				- We can get rid of the following part in __init__()
+
+							if not name:
+								raise ValueError("Missing name")
+
+		- We still can cause a problem using _house in the following because the
+		  instance variable is called this way
+
+					def main():
+						student = get_student()
+						student._house = "Number Four, Privet Drive"
+						print(student)
+
+			- Convention: don't touch a variable that starts with an _
+
+- Examples for classes and methods
+
+	- int
+
+			- class int(x, base=10)
+
+	- str
+
+			- class str(object='')
+
+	- lower()
+
+			- Method from class str
+
+	- list()
+
+			- class list([iterable])
+
+	- list.append(x)
+
+			- Method from class list
+
+- Play around with data types
+
+			$ vi type.py
+
+				print(type(50))
+				print(type("hello, world"))
+				print(type([]))					# Empty list
+				print(type(list()))
+				print(type({}))					# Empty dictionary
+				print(type(dict()))
+
+- Class methods
+	- Associating a function with a class, rather than an object of the class
+	- Has no access to "self"?
+
+		@classmethod							# Another decorator
+
+	- First draft 
+
+			$ vi hat.py
+
+				class Hat:
+					...							# Placeholder
+
+				hat = Hat()						# Instantiating a Hat object
+				# The method sort will tell us the house
+				hat.sort("Harry")
+
+		- Now that we got the idea, we get more specific and test if it works
+
+				class Hat:
+					def sort(self, name):
+						print(name, "is in", "some house")
+
+				hat = Hat()
+				hat.sort("Harry")
+
+		- It worked so we keep on extending it: chose a random house
+
+				import random
+
+				class Hat:
+					def __init__(self):
+						self.houses = ["Gryffindor", \
+									   "Hufflepuff", \
+									   "Ravenclaw", \
+									   "Slytherin"]
+
+					def sort(self, name):
+						house = random.choice(self.houses)
+						print(name, "is in", house)
+
+				hat = Hat()
+				hat.sort("Harry")
+
+			- More thight
+
+					...
+					def sort(self, name):
+						print(name, "is in", random.choice(self.houses))
+					...
+
+		- We don't use classes the right way: there is only one Hat in H. Potter
+		  (a singleton) - but we could do something like (instantiation multiple
+		  objects):
+
+		  			...
+					hat1 = Hat()
+					hat2 = Hat()
+					hat3 = Hat()
+					...
+
+			- @classmethod
+
+				import random
+
+				class Hat:
+					# Using a class variable, instead of __init__ with "self"	
+					# There is only one variable that is shared
+					houses = ["Gryffindor", \
+							  "Hufflepuff", \
+							  "Ravenclaw", \
+							  "Slytherin"]
+
+					# Making this a class method
+					@classmethod
+					# no more self, but reference to the class itself: "cls"
+					def sort(cls, name):
+						house = random.choice(cls.houses)
+						print(name, "is in", house)
+
+				# We get rid of the instantiation of an object and accessing a
+				# class method inside the Hat class
+				Hat.sort("Harry")
+					
+	- Clean up another program
+
+		- Simplify by getting rid of @property's
+
+			$ vi student.py
+
+				class Student:
+					def __init__(self, name, house):
+						self.name = name
+						self.house = house
+
+					def __str__(self)
+						return f"{self.name} from {self.house}"
+
+				def main():
+					student = get_student()
+					print(student)
+
+				# We want to focus on this function to clean up the code
+				def get_student():
+					name = input("Name: ")
+					house = input("House: ")
+					return Student(name, house)
+
+				if __name__ == "__main__":
+					main()
+
+			- The Student class should hold all student specific functionality
+
+				class Student:
+					def __init__(self, name, house):
+						self.name = name
+						self.house = house
+
+					def __str__(self)
+						return f"{self.name} from {self.house}"
+
+					# Creating a method that does not need to create an object
+					# before it is used (outside the class itself?)
+					@classmethod
+					def get(cls):				# Naming convention of the arg
+						name = input("Name: ")
+						house = input("House: ")
+						# We instantiating a student object by using cls that's
+						# passed in. We could use Student, but this is more
+						# conventional to avoid problems down the line.
+						# cls is by definition Student - means name of class?
+						return cls(name, house)
+
+				def main():
+					# Calling the class method "get" directly
+					student = Student.get()
+					print(student)
+
+				if __name__ == "__main__":
+					main()
+
+	- Even cleaner:
+		(1) Move class(es) to own file
+		(2) Import them if needed
+
+- Static methods
+
+	@staticmethod							# Decorator
+
+- Inheritance
+	- Classes can be designed in hierarchical fashion
+		- Attributes can be inherited
+	- Example
+		- Redundency
+
+			$ vi wizard.py
+
+				class Student:
+					def __init__(self, name, house):
+						if not name:
+							raise ValueError("Missing name")
+						self.name = name
+						self.house = house
+
+					...
+
+				class Professor:
+					def __init__(self, name, subject):
+						if not name:
+							raise ValueError("Missing name")
+						self.name = name
+						self.subject = subject
+
+					...
+
+		- Solution: inheritance
+
+			- super()				# Reference to the superclass
+
+				class Wizard:
+					def __init__(self, name):
+						if not name:
+							raise ValueError("Missing name")
+						self.name = name
+					...
+
+				class Student(Wizard):					# Subclass of Wizard
+					def __init__(self, name, house):
+						# Calling the __init__ method of the superclass
+						super().__init__(name)
+						self.house = house
+					...
+
+				class Professor(Wizard):
+					def __init__(self, name, subject):
+						super().__init__(name)
+						self.subject = subject
+
+				wizard = Wizard("Albus")
+				student = Student("Harry", "Gryffindor")
+				professor = Professor("Severus", "Defense ...")
+
+- Exceptions
+
+	docs.python.org/3/library/exceptions.html
+
+		- Subset of available exceptions
+
+				BaseException
+				  +-- Keyboard Interrupt
+				  +-- Exception
+				  		+-- ArithmeticError
+						|	  +-- ZeroDivisionError
+						+-- AssertionError
+						+-- AttributeError
+						+-- EOFError
+						+-- ImportError
+						|	  +-- ModuleNotFoundError
+						+-- LookupError
+						|	  +-- Key Error
+						+-- NameError
+						+-- SyntaxError
+						|	  +-- IndentationError
+						+-- ValueError
+					...
+
+			- Classes and sub-/superclasses:
+				- e.g. BaseException is superclass of Exception is superclass of
+				  ValueError
+
+- Operator overloading
+	- Create own implementation of common symbols (e.g. + sign)
+
+			$ vi vault.py
+
+				class Vault:
+					def __init__(self, galleons=0, sickles=0, knuts=0)
+						self.galleons = galleons
+						self.sickles = sickles
+						self.knuts = knuts
+
+					def __str__(self):
+						return f"{self.galleons} Galleons, \
+								 {self.sickles} Sickles, \
+								 {self.knuts} Knuts"
+
+				potter = Vault(100, 50, 25)
+				print(potter)
+
+				weasley = Vault(25, 50, 100)
+				print(weasley)
+
+		- Combining the contents of two vaults
+
+				galleons = potter.galleons + weasley.galleons
+				sickles = potter.sickles + weasley.sickles
+				knuts = potter.knuts + weasley.knuts
+
+				total = Vault(galleons, sickles, knuts)
+				print(total)
+
+		- Something like the following more elegant instead of what's above?
+
+				total = potter + weasley
+				print(total)
+
+			- TypeError: unsupported operand type(s) for +: 'Vault' and 'Vault'
+
+	- Operator overloading!
+
+		- object.__add__(self, other)
+			- self: left side of operator
+			- other: right side of operator
+
+				class Vault:
+					def __init__(self, galleons=0, sickles=0, knuts=0)
+						self.galleons = galleons
+						self.sickles = sickles
+						self.knuts = knuts
+
+					def __str__(self):
+						return f"{self.galleons} Galleons, \
+								 {self.sickles} Sickles, \
+								 {self.knuts} Knuts"
+
+					def __add__(self, other):
+						galleons = self.galleons + other.galleons
+						sickles = self.sickles + other.sickles
+						knuts = self.knuts + other.knuts
+						return Vault(galleons, sickles, knuts)
+
+				potter = Vault(100, 50, 25)
+				print(potter)
+
+				weasley = Vault(25, 50, 100)
+				print(weasley)
+
+				total = potter + weasley
+				print(total)
+
+	- Operators that can be overloaded
+
+		docs.python.org/3/reference/datamodel.html#special-method-names
+
+
+--------------------------------------------------------------------------------
+9 Et Cetera
+--------------------------------------------------------------------------------
+
+- docs.pyhton.org/3/howto/
+
+- set
+
+	- Collection of values, without duplicates
+	- docs.python.org/3/library/stdtypes.html#set
+	- Example
+		- Filtering out duplicates
+
+			$ vi houses.py
+
+				students = [
+					{"name": "Hermione", "house": "Gryffindor"},
+					{"name": "Harry", "house": "Gryffindor"},
+					{"name": "Ron", "house": "Gryffindor"},
+					{"name": "Draco", "house": "Slytherin"},
+					{"name": "Padma", "house": "Ravenclaw"},
+				]
+
+				houses = []				# Empty list
+				for students in students:
+					if student["houses"] not in houses:
+						houses.append(student["house"])
+
+				for house in sorted(houses):
+					print(house)
+
+			- Now using a set instead of a list (houses = []) and "add"
+
+				...
+				houses = set()			# Empty set
+				for student in students:
+					houses.add(student["house"])
+
+				for house in sorted(houses):
+					print(house)
+
+- global
+
+	- Local variables shadow global variables!
+		- Don't use same names for a global and a local variable!
+	- Use global variables as sparingly as possible
+		- Technically global variables are local to a module in Python
+	- Changing variables (or not)
+
+			$ vi bank.py
+
+				balance = 0
+
+				def main():
+					print("Balance:", balance)
+
+				if __name__ == "__main__"
+					main()
+
+		- Extending the program
+
+				balance = 0
+
+				def main():
+					print("Balance:", balance)
+					deposit(100)
+					withdraw(50)
+					print("Balance:", balance)
+
+				def deposit(n):
+					balance += n		# Incrementing
+
+				def withdraw(n):
+					balance -= n		# Decrementing
+
+				if __name__ == "__main__"
+					main()
+
+				# Output: UnboundLocalError: local variable 'balance' referenced
+				# 		  before assignment
+				# We can't write to a global variable the way we read it from
+				# within our functions
+
+			- Putting the variable inside main() won't work either
+
+				def main():
+					balance = 0
+					print("Balance:", balance)
+					...
+
+		- Solution
+
+			- global
+
+				balance = 0
+
+				...
+
+				def deposit(n):
+					# Signal to Python to edit a global variable
+					global balance
+					balance += n
+
+				def withdraw(n):
+					global balance
+					balance -= n
+
+				if __name__ == "__main__"
+					main()
+
+		- Modification
+
+				class Account:
+					def __init__(self):
+						self._balance = 0	# _ indicates that var is "private"
+
+					@property				# Getter: allows for account.balance
+					def balance(self):
+						return self.balance
+
+					def deposit(self, n):
+						self._balance += n
+
+					def withdraw(self, n):
+						self._balance -= n
+
+				def main():
+					account = Account()
+					print("Balance:", account.balance)
+					account.deposit(100)
+					account.withdraw(50)
+					print("Balance:", account.balance)
+
+				if __name__ == "__main__":
+					main()
+
+			- Our instance variable (e.g., self._balance = 0) are accessible to
+			  all methods in the class because we access them with "self"
+
+- constants
+
+	- Example
+
+			$ vi meows.py
+
+				for i in range(3):
+					print("meow")
+
+		- Improve
+
+				for _ in range(3):			# We don't use i!
+					print("meow")
+
+			- Hard coding the 3 can lead to problems
+			- Best practice:
+
+				MEOWS = 3
+
+				for _ in range(MEOWS):
+					print("meow")
+
+	- Problem
+		- Python does not make variables constant
+			- Convention: uppercase = don't touch
+			- But possible to:
+
+				MEOWS = 3
+				...
+				MEOWS = 4
+				...
+				for _ in range(MEOWS):
+					print("meow")
+
+	- Alternative approach (class constant - by convention)
+
+				class Cat:
+					MEOWS = 3		# Class variable: "class constant" by conv.
+
+					def meow(self):
+						for _ in range(Cat.MEOWS):
+							print("meow")
+
+				cat = Cat()
+				cat.meow()
+
+- type hints
+	
+	- docs.python.org/3/library/typing.html
+
+	- mypy
+
+		- pip install mypy
+		- mypy.readthedocs.io
+
+			$ vi meows.py
+
+				def meow(n):
+					for _ in range(n):
+						print("meow")
+
+				number = input("Number: ")
+				meow(number)
+
+				# Output: TypeError: 'str' object cannot be interpreted as an
+				#		  integer
+
+		- Programming more defensively, using a type hint
+
+				def meow(n: int):			# Type hint
+					for _ in range(n):
+						print("meow")
+
+				...
+
+			- Still error: type is not enforced by Python
+
+		- Using mypy
+
+			$ mypy meows.py
+			meows.py:7: error: Argument 1 to "meow" has incompatible type
+			"str"; expected "int"
+			...
+
+		- Adding type hints to variables
+
+				...
+				number: int = input("Number: ")
+				...
+
+		- Correcting the bug and running mypy again
+
+				...
+				number: int = input("Number: ")
+				...
+
+			$ mypy meows.py
+			Success: no issues found in 1 source file
+
+	- Now our function should return a value instead of printing "meow"
+
+				def meow(n: int):
+					for _ in range(n):
+						print("meow")
+
+				number: int = int(input("Number: "))
+				meows: str = meow(number)
+				print(meows)
+
+			$ python3 meows.py
+			Number: 2
+			meow
+			meow
+			None		# Implicit "return value" if there is none defined
+
+		- Modification
+
+				def meow(n: int) -> None:			# Hinting the return value
+					for _ in range(n):
+						print("meow")
+
+				number: int = int(input("Number: "))
+				meows: str = meow(number)
+				print(meows)
+
+			$ mypy meows.py
+			mewos.py:7: error: "meow" dows not return a value
+			...
+
+		- Fixing the problem
+
+				def meow(n: int) -> str:			# Hinting the return value
+					return "meow\n" * n
+
+				number: int = int(input("Number: "))
+				meows: str = meow(number)
+				print(meows, end="")
+
+- docstrings
+
+	- peps.python.org/pep-0257/
+	- Dokumenting the program
+
+				def meow(n: int) -> str:
+					"""Meow n times."""		# docstring format: tripple quote
+					return "meow\n" * n
+
+				number: int = int(input("Number: "))
+				meows: str = meow(number)
+				print(meows, end="")
+
+		- Using docstrings to standardize the information therein:
+			- "Restructured Text" (Markdown-like language)
+			- Convention:
+
+				def meow(n: int) -> str:
+					"""
+					Meow n times.
+
+					:param n: Number of times to meow
+					:type n: int
+					:raise TypeError: If n is not an int
+					:return: A string of n meows, one per line
+					:rtype: str
+					"""
+					return "meow\n" * n
+				...
+
+- Working from command line
+
+			$ vi meows.py
+
+				import sys
+
+				if len(sys.argv) == 1:
+					print("meow")
+				elif len(sys.argv) == 3 and sys.argv[1] == "-n":
+					n = int(sys.argv[2])
+					for _ in range(n):
+						print("meow")
+				else:
+					print("usage: meows.py")
+
+			$ python3 meows.py -n 2
+			meow
+			meow
+
+	- argparse (library)
+
+			 $ vi meows.py
+
+			 	import argparse
+
+				# ArgumentParser = Constructor for a class called ArgumentParser
+				parser = argparse.ArgumentParser()
+				parser.add_argument("-n")
+				# args = object containing cli arguments
+				# parser parses all cli arguments
+				args = parser.parse_args()
+
+				for _ in range(int(args.n)):
+					print("meow")
+
+			$ python3 meows.py -n 2
+			meow
+			meow
+			$ python3 meows.py
+			TypeError: int() argument must be a string, a bytes-like object...
+
+			$ python3 meows.py -h
+			...
+			$ python3 meows.py --help
+			usage: ...
+
+			options:
+			  ...
+
+		- Improving program
+
+				import argparse
+
+				parser = argparse.ArgumentParser(description="Meow like a cat")
+				parser.add_argument("-n", help="number of times to meow")
+				args = parser.parse_args()
+
+				# args.n contains the value that human typed after -n
+				for _ in range(int(args.n)):
+					print("meow")
+
+			$ python3 meows.py -h
+			...							# Info from above
+
+			$ python meows.py
+			TypeError: ...
+
+		- Further improving
+
+				...
+				parser.add_argument("-n", \
+									default=1, \
+									help="number of times to meow", \
+									type=int)
+				args = parser.parse_args()
+
+				for _ in range(args.n):
+					print("meow")
+
+			$ python3 meows.py
+			meow
+
+- unpacking
+	- Works for lists, and somehow for dictionaries
+		- Not for sets (because order is not perserved?)
+
+	- taking one argument and splitting it in two (or more?) variables
+
+			$ vi unpack.py
+
+				# Second variable is _ because not further used
+				first, _ = input("What's your name? ").split(" ")
+				print(f"hello, {first}")
+
+	- Another attempt
+
+			$ vi unpack.py
+
+				def total(galleons, sickles, knuts):
+					# Converting galleons and sickles to knuts
+					return (galleons * 17 + sickles) * 29 + knuts
+
+				print(total(100, 50, 25), "Knuts")
+
+		- Using a list
+
+				def total(galleons, sickles, knuts):
+					return (galleons * 17 + sickles) * 29 + knuts
+
+				coins = [100, 50, 25]	
+
+				print(total(coins[0], coins[1], coins[2]), "Knuts")
+
+		- Less verbose but wrong
+
+				def total(galleons, sickles, knuts):
+					return (galleons * 17 + sickles) * 29 + knuts
+
+				coins = [100, 50, 25]	
+
+				print(total(coins), "Knuts")
+
+				# TypeError: total() missing 2 required positional arguments:
+				# 'sickles' and 'knuts'
+
+	- unpacking list using *
+
+				...
+				coins = [100, 50, 25]	
+
+				# Taking one sequence (here, coins) and unpack it into
+				# individual arguments
+				print(total(*coins), "Knuts")
+
+	- Using names
+
+				def total(galleons, sickles, knuts):
+					return (galleons * 17 + sickles) * 29 + knuts
+
+				print(total(galleons=100, sickles=50, knuts=25), "Knuts")
+
+		- Using a dictionary
+
+				def total(galleons, sickles, knuts):
+					return (galleons * 17 + sickles) * 29 + knuts
+
+				coins = {"galleons": 100, \
+						 "sickles": 50, \
+						 "knuts": 25
+				}
+
+				print(total(coins["galleons"], \
+							coins["sickles"], \
+							coins["knuts"]), "Knuts")
+
+			- unpacking dictionary with **
+
+				def total(galleons, sickles, knuts):
+					return (galleons * 17 + sickles) * 29 + knuts
+
+				coins = {"galleons": 100, \
+						 "sickles": 50, \
+						 "knuts": 25
+				}
+
+				print(total(**coins), "Knuts")
+
+			- To be clear: (**coins) is equivalent to the following:
+
+					(galleons=100, sickles=50, knuts=25)
+
+		- Using default values
+			- Makes it possible to provide fewer arguments without error
+
+				def total(galleons=0, sickles=0, knuts=0):
+					return (galleons * 17 + sickles) * 29 + knuts
+				...
+
+	- *args, **kwargs
+		- Do not need to be called this way:
+			- e.g., *objects instead of *args
+		- *args
+			- Placholder for (some yet not defined amount of) positional args
+		- **kwargs
+			- Placholder for (some yet not defined amount of) keyword args
+		- Keyword arguments
+			- Named parameters
+			- Can be called optionally and individually by their name
+		- Example
+
+			$ vi unpack.py
+
+				def f(*args, **kwargs):
+					print("Positional:", args)
+
+				f(100, 50, 25)
+
+			$ python3 unpack.py
+			Positional: (100, 50, 25)
+
+		- Passing a fourth argument
+
+				...
+				f(100, 50, 25, 5)
+
+			$ python3 unpack.py
+			Positional: (100, 50, 25, 5)
+
+		- Only one
+
+				...
+				f(100)
+
+			$ python3 unpack.py
+			Positional: (100,)		# Comma indicates that it's a list
+
+		- Printing out the keyword/named arguments
+
+			$ vi unpack.py
+
+				def f(*args, **kwargs):
+					print("Named:", kwargs)
+
+				f(galleons=100, sickles=50, knuts=25)
+
+			$ python3 unpack.py
+			Named: {'galleons': 100, 'sickles': 50, 'knuts': 25}
+
+	- print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
+		- Indicates: print takes variable number of arguments
+
+				def print(*objects, sep=' ', ...):
+					for object in objects:
+						...
+
+- map
+	- Apply (map) some function to every element of a sequence
+
+		docs.python.org/3/library/functions.html#map
+	
+	- Program takes a string and yells it
+
+			$ vi yell.py
+
+				def main():
+					yell("This is CS50")
+
+				def yell(phrase):
+					print(phrase.upper())
+
+				if __name__ == "__main__"
+					main()
+
+		- Using individual words
+
+				def main():
+					yell(["This", "is", "CS50"])
+
+				def yell(words):
+					uppercased = []
+					for word in words:
+						uppercased.append(word.upper())
+					print(*uppercased)					# Unpacking needed =)
+
+				if __name__ == "__main__"
+					main()
+
+		- Reject using a list
+
+				def main():
+					yell("This", "is", "CS50")
+
+				def yell(*words):					# Variable number of words
+					uppercased = []
+					for word in words:
+						uppercased.append(word.upper())
+					print(*uppercased)
+
+				if __name__ == "__main__"
+					main()
+		
+		- map(function, iterable, ...)
+
+				def main():
+					yell("This", "is", "CS50")
+
+				def yell(*words):
+					uppercased = map(str.upper, words)	# use str.upper on words
+					print(*uppercased)
+
+				if __name__ == "__main__"
+					main()
+
+- list comprehensions
+
+	- Constructing a list on the fly
+				
+				def main():
+					yell("This", "is", "CS50")
+
+				def yell(*words):
+					uppercased = [word.upper() for word in words]  # Create list
+					print(*uppercased)
+
+				if __name__ == "__main__"
+					main()
+
+	- Filter output
+
+			$ vi gryffindors.py
+
+				students = [
+					{"name": "Hermione", "house": "Gryffindor"},
+					{"name": "Harry", "house": "Gryffindor"},
+					{"name": "Ron", "house": "Gryffindor"},
+					{"name": "Draco", "house": "Slytherin"},
+				]
+
+				# We want only students from Gryffindor
+
+				# Creating a list comprehension conditionally
+				gryffindors = [
+					student["name"] for student in students \
+					if student["house"] == "Gryffindor"
+				]
+
+				for gryffindor in sorted(gryffindors):
+					print(gryffindor)
+
+- filter(function, iterable)
+
+		docs.python.org/3/library/functions.html#filter
+
+	- Alternative to above
+
+			$ vi gryffindors.py
+
+				students = [
+					{"name": "Hermione", "house": "Gryffindor"},
+					{"name": "Harry", "house": "Gryffindor"},
+					{"name": "Ron", "house": "Gryffindor"},
+					{"name": "Draco", "house": "Slytherin"},
+				]
+
+				def is_gryffindor(s):					# s for student
+					if s["house"] == "Gryffindor":
+						return True
+					else:
+						return False
+
+		- Tighten the code and keep going
+
+				...
+				def is_gryffindor(s):
+					return s["house"] == "Gryffindor"
+
+				gryffindors = filter(is_gryffindor, students)
+
+				for gryffindor in gryffindors:
+					print(gryffindor["name"])
+
+		- Sorting the output
+
+				...
+				for gryffindor in sorted(gryffindors, \
+				key=lambda s: s["name"]):
+					print(gryffindor["name"])
+
+	- Another approach
+
+				students = [
+					{"name": "Hermione", "house": "Gryffindor"},
+					{"name": "Harry", "house": "Gryffindor"},
+					{"name": "Ron", "house": "Gryffindor"},
+					{"name": "Draco", "house": "Slytherin"},
+				]
+
+				gryffindors = filter(lambda s: s["house"] == "Gryffindor", \
+				students)
+
+				for gryffindor in sorted(gryffindors, \
+				key=lambda s: s["name"]):
+					print(gryffindor["name"])
+
+- dictionary comprehensions
+
+	- Create a dictionary on the fly
+
+			$ gryffindors.py
+
+				students = ["Hermione", "Harry", "Ron"]
+
+				gryffindors = []
+
+				for student in students:
+					gryffindors.append({"name": student, "house": "Gryffindor"})
+
+				print(gryffindors)
+
+		- Using a list comprehension
+
+				students = ["Hermione", "Harry", "Ron"]
+				
+				gryffindors = [{"name": student, "house": "Gryffindor"} for \
+				student in students]
+
+				print(gryffindors)
+
+		- We want new dictionary being created (keys=names, values=house)
+			- Using a dictionary comprehension
+
+				students = ["Hermione", "Harry", "Ron"]
+				
+				gryffindors = {student: "Gryffindor" for student in students}
+
+				print(gryffindors)
+
+- enumerate
+
+		docs.python.org/3/library/functions.html#enumerate
+
+	- Ranking
+
+				students = ["Hermione", "Harry", "Ron"]
+
+				for i in range(len(students)):
+					print(i + 1, students[i])
+
+	- Using enumerate(iterable, start=0)
+
+				students = ["Hermione", "Harry", "Ron"]
+				
+				for i, student in enumerate(students):
+					print(i + 1, student)
+
+- generators, iterators
+
+		docs.python.org/3/howto/functional.html#generators
+
+	- Function can be defined as a generator
+		- Returns just a little bit of data at a time
+
+	- Counting sheep
+
+			$ vi sleep.py
+
+				n = int(input("What's n? "))
+				for i in range(n):
+					print("zzZz" * i)
+
+		- Using main()
+
+				def main():
+					n = int(input("What's n? "))
+					for i in range(n):
+						print("zzZz" * i)
+
+				if __name__ = "__main__"
+					main()
+
+		- Using a function (sheep)
+
+				def main():
+					n = int(input("What's n? "))
+					for i in range(n):
+						print(sheep(i))
+
+				def sheep(n):
+					return "zzZz" * n
+
+				if __name__ = "__main__"
+					main()
+
+		- We want a function that handels the process of returning the entire
+		  string that we want, rather than one row of sheep at a time
+
+				def main():
+					n = int(input("What's n? "))
+					for s in sheep(n):
+						print(s)
+					
+				def sheep(n):
+					flock = []
+					for i in range(n):
+						flock.append("zzZz" * i)
+					return flock
+
+				if __name__ = "__main__"
+					main()
+
+		- Problem:
+
+			$ python sleep.py
+			What's n? 1000000
+			# Program stoped to print: OOM
+
+				- Helper function sheep() is the problem
+					- Tries to return the entire string
+
+	- Solution to our problem
+
+		- generators
+
+			- yield
+
+				...
+				def sheep(n):
+					for i in range(n):
+						yield "zzZz" * i		# Return one value at a time
+				...
+
+		- iterators
+
+			- yield is returning an iterator
+				- Allows to iterate over generated values one at a time

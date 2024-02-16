@@ -1,0 +1,332 @@
+--------------------------------------------------------------------------------
+git --distributed-is-the-new-centralized
+https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control
+--------------------------------------------------------------------------------
+
+
+	----------------------------------------------------------------------------
+	4. Git on the Server
+	----------------------------------------------------------------------------
+
+
+	4.1 Git on the Server - The Protocols
+
+		
+		- Local Protocol
+
+			- Usecase
+				- Team has access to a shared filesystem (e.g., NFS)
+				- Grabbing work from someone's working repository
+
+			- Working wit a local file-based repository
+
+					git clone /srv/git/project.git
+					git clone file://srv/git/project.git
+
+				- The file://... form
+
+					- Less efficient
+						- Using processes usually used to transfer data over net
+					- Usage
+						- For clean copies of the repository with extraneous
+						  references or objects left out (generally after an
+						  import form another VCS or something similar)
+
+				- Add local repository
+
+					git remote add local_proj /srv/git/project.git
+
+				- Pulling from someone's working directory
+
+					git pull /home/john/project
+
+			- Pros and Cons
+
+				+ simple
+				+ using existing file permissions and network access
+
+				- shared access usually harder to set up than basic network
+				  access
+				- not the fastest option
+				- no protection against (accidental) damage
+
+		- HTTP Protocols
+
+			- Smart HTTP
+
+				- Runs over standard HTTPS ports
+				- Can use various HTTP auth mechanisms
+				- Same URL for everything?
+
+			- Dumb HTTP
+
+				- Git repo files served like normal files from web server
+				- Simple to set up
+				- Example
+					- Allow read access over HTTP
+
+							cd /var/www/htdocs/
+							git clone --bare /path/2/git_project gitproject.git
+							cd gitproject.git
+							mv hooks/post-update.sample hooks/post-update
+							chmod a+x hooks/post-update
+
+						- Cloning
+
+							git clone https://example.com/gitproject.git
+
+			- Pros and Cons
+
+				+ simplicity
+				+ encryption of content transfer (read-only over HTTPS)
+				+ less likely problems with firewalls
+
+				- HTTPS can be more tricky to set up compared to SSH
+				- HTTP and credential provision more work than SSH
+
+		- SSH Protocol
+
+			- Example
+
+				- CLoning
+
+					git clone ssh://[user@]server/project.git
+					git clone [user@]server:project.git
+
+			- Pros and Cons
+
+				+ relatively easy to set up
+				+ secure
+				+ efficient (very compact data)
+
+				- does not support anonymous access to repository
+		
+		- Git Protocol
+
+			- Special daemon
+			- Listens on port 9418
+			- Same data-transfer mechanism as SSH protocol but 
+			  no encryption/auth (overhead)
+				- Only security: git-daemon-export-ok file
+			- Pros and cons
+
+				+ often the fastest network transfer protocol available
+					
+				- cloning over git:// might lead to an arbitrary code execution
+				  vulnerability
+				- probably most difficult protocol to set up  
+
+
+	4.2 Git on the Server - Getting Git on a Server (bare minimum)
+
+		- Initial step
+
+			- Export an existing repository into a new bare repository (i.e.,
+			  one without a working directory)
+
+					git clone --bare my_project my_project.git
+
+						roughly equivalent to
+
+					cp -Rf my_project/.git my_project.git	
+
+		- Add SSH-able accounts on the server			
+		- Put the bare repository on a server
+
+			- Example
+				- server: git.example.com
+				- SSH access
+				- repository under /srv/git
+
+					scp -r my_project.git user@git.example.com:/srv/git
+
+				- Cloning the repository
+
+					git clone user@git.example.com:/srv/git/my_project.git
+
+				- Having write access to /srv/git/my_project means push access
+				- Initializing -care: destroys any commits, refs, etc in process
+
+					ssh user@git.example.com
+					cd /srv/git/my_project.git
+					git init --bare --shared
+
+
+	4.3 Git on the Server - Generating Your SSH Public Key
+	
+	4.4 Git on the Server - Setting Up the Server
+
+		- Use 'ssh-copy-id' if possible
+		- Create git user account and .ssh dir for that user
+
+				sudo adduser git
+				su git
+				cd
+				mkdir .ss&& chmod 700 .ssh
+				touch .ssh/authorized_keys && chmod 600 .ssh/authorized_keys
+
+		- Add developer SSH public keys to authorized_keys
+
+				cat /tmp/id_rsa.john.pub >> ~/.ssh/authorized_keys
+				cat /tmp/id_rsa.josie.pub >> ~/.ssh/authorized_keys
+				cat /tmp/id_rsa.jessica.pub >> ~/.ssh/authorized_keys
+
+		- Set up an empty repository (initializing repo w/o working dir)
+
+				cd /srv/git
+				mkdir project.git
+				cd project.git
+				git init --bare
+
+			- This repo can be added as remote and be pushed to	
+			- NOTE:
+				- Every time an project is added, someone needs to shell onto
+				  the machine and create a bare repository
+		
+		- Assumption: gitserver is hostname and DNS is set up to point to it
+
+				# on John's computer
+				cd myproject
+				git init
+				git add .
+				git commit -m 'Initial commit'
+				git remote add origin git@gitserver:/srv/git/project.git
+				git push origin master
+
+				# others
+				git clone git@gitserver:/srv/git/project.git
+				cd project
+				vim README
+				git commit -am 'Fix for README file'
+				git push origin master
+
+		- Limit git user account to only Git-related activities
+
+				cat /etc/shells		# check if git-shell already in
+				which git-shell		# make sure git-shell is installed
+				sudo -e /etc/shells	# add path/2/git-shell
+
+			- Edit the shell for a user
+
+				sudo chsh git -s $(which git-shell)
+
+			- Push/pull possible but not:
+
+				ssh git@gitserver
+				fatal: ...
+
+			- IMPORTANT: disable SSH port forwarding for specific users
+				- Prepend the following to specific keys in authorized_keys
+
+					no-port-forwarding,no-X11-forwarging,no-agent-forwarding,no-
+					pty
+
+		- Customizing git-shell command
+
+				git help shell
+
+
+	4.5 Git on the Server - Git Daemon
+
+		- Set up the Git protocol by daemonizing the following command
+
+				git daemon -reuseaddr --base-path=/srv/git /srv/git
+
+			- Example
+
+				vim /etc/systemd/system/git-daemon.service
+
+					[Unit]
+					Description=Start Git Daemon
+
+					[Service]
+					ExecStart=/usr/bin/git daemon --reuseaddr \
+												  --base-path=/srv/git/ \
+												  /srv/git/
+
+					Restart=always
+					RestartSec=500ms
+
+					StandardOutput=syslog
+					StandardError=syslog
+					SyslogIdentifier=git-daemon
+
+					User=git
+					Group=git
+
+					[Install]
+					WantedBy=multi-user.target
+
+				systemctl enable git-daemon
+				systemctl start git-daemon
+
+		- Tell Git which repositories to allow unauthenticated Git server-based
+		  access to
+		  	- In each repository
+
+				cd /path/to/project.git
+				touch git-daemon-export-ok
+
+
+	4.6 Git on the Server - Smart HTTP
+
+		- git-http-backend
+
+			- CGI script
+			- reads path and headers sent by 'git fetch'/'git push' to an HTTP
+			  URL
+
+		- Basic setup
+			- Apache as CGI server
+
+				sudo apt-get install apache2 apache2-utils
+				a2enmod cgi alias env
+
+			- Needed modules (included)
+
+				mod_cgi, mod_alias, mod_env
+
+			- Let web server read-/write- access the repository
+
+				chgrp -R www-data /srv/git
+
+			- Apache configuration
+
+				SetEnv GIT_PROJECT_ROOT /srv/git
+				SetEnv GIT_HTTP_EXPORT_ALL
+				ScriptAlias /git/ /usr/lib/git-core/git-http-backend/
+
+			- No GIT_HTTP_EXPORT_ALL env var?
+				- Means: serving only to unauthenticated clients with
+				  git-daemon-export-ok file
+
+			- Tell apacha to allow requests to git-http-backend
+
+				<Files "git-http-backend">
+					AuthType Basic
+					AuthName "Git Access"
+					AuthUserFile /srv/git/.htpasswd
+					Require expr !(%{QUERY_STRING} -strmatch \
+						'*service=git-receive-pack*' || %{REQUEST_URI} \
+						=~ m#/git-receive-pack$#)
+					Require valid-user
+				</Files>	
+
+			- Requires a .htpasswd file containing pw's of all valid users
+				- Example
+					- Adding "schacon" user to file
+
+							htpasswd -c /srv/git/.htpasswd schacon
+
+
+	4.7 Git on the Server - GitWeb
+
+		- GitWeb
+			
+			- CGI script
+			- Sets up a simple web-based visualizer
+
+
+	4.8 Git on the Server - GitLab
+
+	4.9 Git on the Server - Third Party Hosted Options

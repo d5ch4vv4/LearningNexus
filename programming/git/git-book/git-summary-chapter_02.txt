@@ -1,0 +1,373 @@
+--------------------------------------------------------------------------------
+git --distributed-is-the-new-centralized
+https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control
+--------------------------------------------------------------------------------
+
+
+	----------------------------------------------------------------------------
+	2. Git Basics
+	----------------------------------------------------------------------------
+
+
+	2.1 Git Basics - Getting a Git Repository
+
+
+		- Initializing a Repository in an Existing Directory
+
+				git init
+
+		- Version controlling existing files
+
+				git add *.c
+				git add LICENSE
+
+				git commit -m 'Initial project version'
+
+		- Cloning an Existing Repository
+
+				git clone https://github.com/libgit2/libgit2
+
+		- Cloning into a directory named differently
+
+				git clone https://github.com/libgit2/libgit2 mylibgit
+
+
+	2.2 Git Basics - Recording Changes to the Repository
+
+		- Two file states
+
+			(1) tracked
+			(2) untracked
+
+		- Check status of files
+
+				git status
+
+		- Tracking new files; staging modified files
+
+				git add README
+		
+		- Short status
+
+				git status -s
+
+		- Ignoring Files
+
+				cat .gitignore
+				# ignore all files ending in ".o" or ".a"
+				*.[oa]
+
+				# but track lib.a!
+				!lib.a
+
+				# only ignore the TODO file in the current dir, not subdir/TODO
+				/TODO
+
+				# ignore all files in any dir named build
+				build/
+
+				# ignore doc/notes.txt, but not doc/server/arch.txt
+				doc/*.txt
+
+				# ignore all .pdf file in the doc/ dif and any of its subdirs
+				doc/**/*.pdf
+
+			- For more info check:
+
+				https://github.com/github/gitignore
+
+				man gitignore
+
+		- Viewing Staged and Unstaged Changes
+
+				git diff
+
+			- Compare staged changes to last commit (synonyms)
+
+				git diff --staged
+				git diff --cached
+
+			- In case of encoding problems
+
+				vim .gitattributes
+
+					*.txt	text working-tree-encoding=UTF-16 eol=CRLF
+
+			- Use difftool
+
+				git difftool
+				
+			- View available difftools
+
+				git difftool --tool-help
+
+		- Committing Changes
+
+				git commit
+
+			- Also put diff into the editor
+
+				git commit --verbose
+
+			- Specifying the message
+
+				git commit --message "message"
+
+			- Skipping the staging area
+
+				git commit --all --message "message"
+
+		- Removing Files
+
+				rm some_file
+				git rm some_file
+
+			- Override the up-to-date check
+
+				git rm --force some_file
+
+			- Keep the file in the working tree but remove it from index
+
+				git rm --cached some_file
+
+			- Remove all files ending with ~
+
+				git rm \*~
+
+		- Moving Files
+
+			- Rename file
+
+				git mv old_name new_name
+
+
+	2.3 Git Basics - Viewing the Commit History
+
+				git log
+
+		- Most popular options
+
+				git log --patch			# show difference introduced in commit
+				git log -2				# show only the last two entries
+				git log --stat			# view abbreviated stats
+				git log --pretty=...	# change format
+
+					git log --pretty=oneline
+					git log --pretty=format"%h - %an, %ar : %s"
+
+						%H	..commit hash
+						%h	..abbreviated commit hash
+						%T	..tree hash
+						%t	..abbreviated tree hash
+						%P	..parent hashes
+						%p	..abbreviated parent hashes
+
+						%an	..author name
+						%ae	..author email
+						%ad	..author date
+						%ar	..author date, relative
+
+						%cn	..committer name
+						%ce	..committer email
+						%cd	..committer date
+						%cr	..committer date, relative
+
+						%s	..subject
+
+				git log --graph ...		# ASCII graph of branch/merge history
+
+					git log --prett=format:"%h %s" --graph
+
+		- Limiting Log Output
+
+				git log --since ...
+				git log --until ...
+
+						git log --since=2.weeks
+						git log --until "2045-01-15"
+
+						git log --since "2001-01-15" \
+							 	--until "2 years 1 day 3 minutes ago"
+
+				git log --author ...	# filter on specific author
+				git log --grep ...		# search for keywords in commits
+
+						git log --grep initial
+
+				git log -S ...			# change in number of occurrences
+
+						git log -S something
+						git log -S something0.* --pickaxe-regex
+
+				git log -- path/2/file	# limit to changes of these files
+
+						git log -- ./dir/some_file.cpp
+
+						
+	2.4 Git Basics - Undoing Things
+
+		- Make additional changes, stage and commit again (can be used to 
+		  change comment message only)
+
+				git commit --amend
+
+		- Unstage a staged file (can be destructive!)
+
+				git reset HEAD <file> ...
+
+		- Unmodifying a modified file (destructive! try not to use it?)
+
+				git checkout -- <file>
+
+		- From Git v.2.23.0 onwards: restore instead of reset (can be
+		  destructive!)
+
+				git restore
+
+						git restore --staged <file>		# unstage
+						git restore <file>				# unmodify modified file
+
+
+	2.5 Git Basics - Working with Remotes
+
+		- Show remotes
+
+				git remote
+
+						git remote --verbose
+
+		- Adding remote repositories
+
+				git remote add <remote_name> <URL>
+
+						git remote add myRemote https://github.com/me/myrepo
+
+		- Fetch information from repository
+
+				git fetch <remote_name>
+
+						git fecth myRemote
+
+		- Fetch and merge at once
+
+				git pull <remote_name>
+
+		- The pull.rebase variable needs to be set (>v.2.27+)
+
+				git config --global pull.rebase "false|true"
+
+						false	..fast-forward, or else create merge commit
+						true	..rebase when pulling
+
+		- Pushing to remotes
+
+				git push <remote_name> <branch>
+
+						git push origin master
+
+		- Inspecting a Remote
+
+				git remote show <remote_name>
+
+						git remote show origin
+
+		- Renaming remotes
+
+				git remote rename <old_name> <new_name>
+
+		- Removing remotes
+
+				git remove <remote_name>
+
+
+	2.6 Git Basics - Tagging
+
+		- List tags
+
+				git tag
+
+						git tag --list "v1.8.5*"
+
+		- Create Annotated Tags
+
+				git tag --annotate <tag> --message "<message>"
+
+						git tag --annotate v1.4 --message "my version 1.4"
+
+		- Check tag data along with commit that was tagged
+
+				git show [<tag>]
+
+						git show
+						git show v1.4
+
+		- Create lightweight tags
+
+				git tag <tag>
+
+						git tag v1.4-lw
+
+		- Tagging later
+
+				git tag --annotate <tag> <hash_of_commit>
+
+						git tag --annotate v1.2 ef34k39
+
+		- Sharing Tags (tags need to be EXPLICITLY pushed to remotes!)
+
+				git push <remote> <tag>
+
+						git push origin v1.5
+
+			- Pushing several tags at once
+
+				git push <remote> --tags
+
+			- Push only annotated tags to the remote
+
+				git push <remote> --follow-tags
+
+		- Deleting Tags
+
+				git tag --delete <tag>
+
+
+			- Delete tag from a remote
+
+				git push <remote> :refs/tags/<tag>
+
+						git push origin :refs/tags/v1.4-lw
+
+				git push <remote> --delete <tag>
+
+						git push origin --delete v1.4
+
+		- Checking out tags (detached HEAD state)
+
+				git checkout <tag>
+
+						git checkout v2.0
+
+			- Making changes (new branch needed! else commit won't belong to any
+			  branch and will be unreachable)
+
+			  			git checkout -b version2 v2.0.0
+
+
+	2.7 Git Basics - Git Aliases
+
+			- Examples
+
+						git config --global alias.co checkout
+						git config --global alias.br branch
+						git config --global alias.ci commit
+						git config --global alias.st status
+
+				- "Creating commands that should exist"
+
+						git config --global alias.unstage 'reset HEAD --'
+						git config --global alias.last 'log -1 HEAD'
+
+				 Use external command (e.g., run gitk)
+
+				 		git config --global alias.visual '!gitk'

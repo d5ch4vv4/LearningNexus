@@ -1,0 +1,127 @@
+CppCon 2017: Robert Ramey
+“How to Write Effective Documentation for C++ Libraries...” 
+
+
+- Craft code and documentation together
+
+- advices
+	- write one sentence which describes what the body of code is inteded to do
+
+- good example
+
+		This library facilitates effective usage of asyncronous file i/o.
+		Among other thing, it will help you
+
+			- reduce i/o latency.
+			- permit ...
+			...
+
+- example header comment
+
+		// ...
+		//
+		// Created by x y on 8/2/17.
+		// Copyright ...
+
+- writing pseudo code can help writing the documentation (and code ofc!)
+	- some kind of "todo-list" if written before the code itself
+
+		int main () {
+			// given an array 42 characters long
+			char storage[42];
+
+			// create a ring view which uses the whole storage buffer
+			ring_view<char *> rv{std::begin(storage), std::end(storage)};
+
+			try {
+				// append some characters
+				for (char c : "hello world\n"){
+					rv.push(c);
+				}
+				// extract them in first in/ first out sequence
+				while (! rv.empty())
+					// and display one by one
+					std::cout << rv.pop();
+			}
+			// catch case where too many characters are pushed
+			catch (std::overflow_error e) {
+				...
+
+	- another example
+
+		...
+		public: // <a name="public_interface">
+			// iterator type must be at least a forward iterator
+			TICK_TRAIT_CHECK (tick::is_forward_iterator<I>);
+
+			...
+
+- helpful
+	- make clear distinction between
+			(1) user interface (public api)
+			(2) implementation
+		- one problem at creating documenations:
+			- we put too much in there
+			- clear distinctions as above can help address specific "audience"
+			  at dedicated places
+				- i.e., user, maintainer, ...
+
+- documentation contents
+
+	(1) introduction - purpose of the library
+	(2) motivating example(s) with explanation
+	(3) notes
+			- "stuff that does not fit anywhere"
+	(4) rationale
+			- little "quirks" discovered while coding
+				- e.g., this does not work on that machine
+				- e.g., if i do that it creates another problem
+	(5) references
+		(5.1) concepts (type requirements)
+				- ever parameter type used needs a description of what that
+				  parameter has to do
+				- seldomly has to be written (found in std documentation)
+					- BUT: useful to refer to them (e.g., a link to iterator)
+		(5.2) types
+		(5.3) functions
+		(5.4) metafunctions
+
+- standards
+
+	- standard template library programmer's guide
+
+		https://www.boost.org/sgi/stl/
+
+	- check how its written there
+		- e.g., how a specifc types described there?
+
+- keep it short and simple
+	- describe the api, not the implementation
+		- this way changes on the implementation, that do not alter the api do
+		  not have to be documented (again)
+- dont't describe things that are not used/implemented?
+- recap
+	- purpose of documentation
+		- documentation is help users make use of the code
+			- it should explicitly state the intended purpose of the code
+			- code should reflect that same intention
+			- should address only the public api
+			- anything else can be excluded
+			- implementation notes should mostly be in the code
+	- when does one build documentation
+		- documentation should be built as application is built
+			- fight scope creep
+				- when some enhancement is added to the code, update the
+				  document to see if it fits the intended purpose
+			- fighting design and coding confusion
+				- if something is hard to describe, it's likely ill concieved
+					- either in the coding or it's conception
+		- by keeping the documentation and cod in sync, the project is more
+		  likely to stay on track
+
+- tool
+	- doxygen
+	- docbook/boostbook
+		- quickbook (editor)
+	- xmlmind
+		- basically xml editor

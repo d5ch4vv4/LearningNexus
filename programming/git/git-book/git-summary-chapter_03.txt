@@ -1,0 +1,289 @@
+--------------------------------------------------------------------------------
+git --distributed-is-the-new-centralized
+https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control
+--------------------------------------------------------------------------------
+
+
+	----------------------------------------------------------------------------
+	3. Git Branching
+	----------------------------------------------------------------------------
+
+
+	3.1 Git Branching - Branches in a Nutshell
+
+
+				git add README test.rb LICENSE
+				git commit -m 'Initial commit'
+
+				git branch testing
+
+				git log --oneline --decorate
+
+				git checkout testing
+
+				vim test.rb
+				git commit -a -m 'Make a change'
+
+				git checkout master
+
+				vim test.rb
+				git commit -a -m 'Make other changes'
+
+				git log --oneline --decorate --graph --all
+				-> divergent history
+
+		- Creating a new branch and switching to it at once
+
+				git checkout -b <branch_name>
+
+		- Using switch instead of checkout ( > v2.23)
+
+				git switch <branch_name>
+				git switch --create <branch_name>
+				git switch -						# return to previous branch
+
+
+	3.2 Git Branching - Basic Branching and Merging
+
+				git checkout -b iss53
+				vim index.html
+				git commit -a -m 'Create new footer [issue 53]'
+
+				git checkout master
+				git chekout -b hotfix
+				vim index.html
+				git commit -a -m 'Fix broken email address'
+
+				git chekcout master
+				git merge hotfix
+				git branch -d hotfix
+
+				git chekcout iss53
+				vim index.html
+				git commit -a -m 'Finish the new footer [issue 53]'
+
+				git checkout master
+				git merge iss53
+				git branch -d iss53
+
+		- Basic merge conflicts
+
+				git mergetool
+
+
+	3.3 Git Branching - Branch Management
+
+		- List current branches
+
+				git branch
+
+						git branch --verbose
+						git branch --merged
+						git branch --no-merged
+						git branch --all
+
+		- Changing a branch name
+
+			- Locally
+
+				git branch --move <old_name> <new_name>
+
+			- On remote
+
+				git push --set-upstream origin <correct_branch_name>
+
+		- Delete branch
+
+			- Localy
+
+				git branch --delete <branch_name>
+
+			- On remote
+
+				git push <remote_name> --delete <branch_name>
+
+						git push origin --delete master
+
+		- Change master branch name
+
+				git branch --move <old_name> <new_name>
+
+						git chekcout master
+						git branch --move master main
+
+			- Make renamed branch available on remote
+
+				git push --set-upstream <remote> <new_name>
+
+						git push --set-upstream origin main
+
+
+	3.4 Git Branching - Branching Workflows
+
+		- Long-Running Branches
+		- Topic Branches
+
+
+	3.5 Git Branching - Remote Branches
+
+		- List references in a remote repository
+
+				git ls-remote <remote>
+
+		- Show various types of remote objects
+
+				git remote show <remote>
+
+		- Remote-tracking branches (=references to the state of remote branches)
+
+				<remote>/<branch>
+
+						origin/master
+						origin/iss53
+						another_server/master
+						another_server/another_branch
+
+		- Pushing
+
+				git push <remote_name> <branch_name>
+
+						git push origin serverfix
+						git push origin serverfix:serverfix		# equivalent
+
+						# calling the branch awesome_branch on the remote
+						git push origin serverfix:awesome_branch
+
+			- If using HTTPS URL to push over (stop prompting for name/pw)
+
+				git config --global credential.helper cache
+
+		- Fetch and merge a remote branch
+
+			- Get pointer to <remote>/<branch>
+
+				git fetch <remote>
+
+			- Merge into current working branch
+
+				git merge <remote>/<branch_name>
+
+			- Or: create own branch with remote one as basis	
+
+				git checkout -b <branch_name> <remote>/<branch_name>
+
+		- Tracking Branches (= local branches that have direct relationship to
+		  					   remote branches)
+
+			- Set up a tracking branch
+
+				git checkout -b <branch> <remote>/<branch>
+				git checkout --track <remote>/<branch>
+
+						git checkout --track origin/serverfix
+							or
+						git checkout serverfix	# if it exists local & remote
+
+			- Set up local branch with different name than the remote branch
+
+				git checkout -b <other_name> <remote>/<branch>
+
+			- Setting an upstream branch for a locally existing branch
+
+				git branch --set-upstream-to=<upstream>
+				git branch -u <remote>/<branch>
+
+						git branch -u origin/serverfix
+
+			- Alias/shortcut for upstream branch
+
+				@{upstream}
+				@{u}
+
+						git merge @{u}
+							instead of
+						git merge origin/master	
+
+			- Check tracking branches that are set up
+
+				git branch -vv
+				...
+				  main            98155e6 [origin/main: ahead 1] added files 
+				...								^
+										 tracked branch
+
+			- Total up to date ahead and behind numbers
+
+				git fetch --all; git branch -vv
+
+		- Pulling
+
+				git pull
+
+		- Deleting remote branches (= remove pointer from the server)
+
+				git push <remote> --delete <branch>
+
+						git push origin --delete serverfix
+
+
+	3.6 Git Branching - Rebasing
+
+		- The Basic Rebase
+
+			(1) Rebasing changes from branch onto another
+
+				git checkout <branch>
+				git rebase <other_branch>
+
+						git checkout experiment
+						git rebase master			# rebase "onto" master
+
+			(2) Fast-forwarding the "other branch"
+
+				git checkout <other_branch>
+				git merge <branch>
+
+						git checkout master
+						git merge experiment
+
+		- More interesting rebases
+
+								------------------ master
+									\
+									 ------------- server
+											\
+											 ----- client
+
+			- "Take the client branch, figure out the patches since it
+			   diverged from the server branch, and replaz these patches
+			   in the client branch as if it was based directly off the
+			   master branch instead"
+
+			   			git rebase --onto master server client
+
+			- Fast-forward the master
+
+						git checkout master
+						git merge client
+
+			- Rebase server branch onto the master branch
+
+						git rebase master server
+
+			- Fast-forward the master again
+
+						git checkout master
+						git merge server
+
+			- Delete not needed branches
+
+						git branch --delete client
+						git branch --delete server
+
+		- Someone pushes a merge, then rebases it and then force-pushes? Try:
+
+						git rebase <remote>/master
+							or
+						git pull --rebase
+							or
+						git fecth && git rebase <remote>/master	

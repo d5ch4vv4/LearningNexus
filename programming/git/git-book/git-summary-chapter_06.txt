@@ -1,0 +1,529 @@
+--------------------------------------------------------------------------------
+git --distributed-is-the-new-centralized
+https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control
+--------------------------------------------------------------------------------
+
+
+	----------------------------------------------------------------------------
+	6. Git Hub
+	----------------------------------------------------------------------------
+
+	
+	6.1 GitHub - Account Setup and Configuration
+
+		- Two Way Authentication
+
+
+	6.2 GitHub - Contributing to a Project
+
+		- The GitHub Flow
+
+			- Centered on the Topic Branches workflow
+			- General procedure
+
+				(1) Fork the project
+				(2) Create a topic branch from master
+				(3) Make commits to improve the project
+				(4) Push this branch to your GitHub project
+				(5) Open a Pull Request on GitHub
+				(6) Discuss, and optionally continue committing
+				(7) The project owner merges or closes the Pull Request
+				(8) Sync the updated master back to your fork
+
+		- Pull Requests
+
+			- Often used in internal projects at the beginning of the
+			  development cycle
+			  	- One can keep pushing to the topic branch after the Pull
+				  Request is opened
+
+			- Adding commits to an existing Pull Request does not trigger
+			  a notification
+			  	- Leave a comment to inform the project owner about updates
+
+			- "Files Changed" tab on Pull Request
+				- "unified" diff:
+					- Total aggregate difference that would be introduced to
+					  the main branch if the topic branch was merged in
+					- In git diff terms
+
+							git diff master...<branch>
+
+			- Merge on the server
+				- Button shows up if one has write access
+				- "Non-fast-forward" merge
+				- If merging branch into master locally and push it to GitHub:
+					- Pull Request will automatically be closed
+
+			- Pull Requests between two branches in the same repository
+				- Initiates the code review and discussion process
+				- No forking necessary
+
+		- Advanced Pull Requests
+
+			- Pull Requests as Patches
+
+				- Change is suggested before the code is thought to be perfect
+				- Early conversation with maintainers
+					- Solution more of a community effort
+				- Changes are pushed as a new commit to the branch rather than
+				  re-rolling the patch series
+
+			- Keeping up wit Upstream
+
+				- Always fix branch if it does not merge cleanly!
+					- Possibilities
+						(1) Rebase your branch on top of whatever the target
+							branch is
+						(2) Merge the target branch into own branch (preferred)
+
+				- Mergin target branch into own branch (example)
+
+						# Add original repository as a remote named upstream
+						git remote add upstream https://github.com/user/repo
+
+						# Fetch the newest work form that remote
+						git fetch upstream
+
+						# Merge the main branch of repository into topic branch
+						git merge upstream/master
+
+						# Fix the conflict that occurred
+						vim blink.ino
+						git add blink.ino
+						git commit
+
+						# Push back up to the same topic branch
+						git push origin slow-blink
+
+				- Don't force push over the branch that the Pull Request is
+				  opened on:
+				  	- Push the rebased branch to a new branch on GitHub
+					- Open a brand new Pull Request referencing the old one
+					- Close the original
+
+			- References
+
+				- Cross-reference another Pull Reques or an Issue
+
+					- Pull Requests and Issues have unique numbers
+					- Referencing
+
+							#<num>
+							username#<num>
+							username/repo#<num>
+
+					- Cross ref in a Pull Request (example)
+
+						Write
+
+							This PR replaces #2 as a rebased branch instead.
+
+							You should also see tonychacon#1 and of course
+							schacon/kidgloves#2.
+
+							Though nothing compares to https://github.com/\
+							schacon/kidgloves/issues/1
+
+					- GitHub automatically creates a trackback event in the
+					  Pull Request timeline
+						- Easy link back to the one that superseded it
+
+				- Reference a specific commit bz SHA-1
+
+					- The full 40 character SHA-1 is needed
+
+		- GitHub Flavored Markdown
+
+			- Can be used in Pull Requests
+
+			- Task Lists
+
+				- Example
+
+						- [X] Write the code
+						- [ ] Write all the tests
+						- [ ] Document the code
+
+				- GitHub shows task lists in Issues and Pull Requests as
+				  metadata on the pages that list them
+
+			- Code Snippets
+
+				- Example ("fence" of backticks)
+
+						```java
+						for(int i=0 ; i < 5 ; i++)
+						{
+							System.out.println("i is : " + i):
+						}
+						```
+
+			- Quoting
+
+				- Example
+
+						> This is the first line of
+						> a two line quote.
+
+						Normal text.
+
+			- Emoji
+
+				- Example
+
+						:eyes: :bug: :+1:
+
+				- Cheat Sheet
+
+						https://www.webfx.com/tools/emoji-cheat-sheet/
+
+			- Images
+
+				- Drag and Drop into Pull Request
+
+		- Keep your GitHub public repository up-to-date			
+
+			- Procedure
+
+					(1) Get on the master
+					(2) Fetch changes and merge them into master
+					(3) Push own master to origin
+
+				- Example
+
+						git checkout master
+						git pull https://github.com/.../something.git
+						git push origin master
+
+			- Automating the procedure a bit
+
+				- Configuration
+
+						git remote add progit https://github.com/.../progit2.git
+						git fetch progit
+						git branch --set-upstream-to=progit/master master
+						git config --local remote.pushDefault origin
+
+				- Workflow
+
+						git checkout master
+						git pull
+						git push
+
+				- CARE to not commit directly to master, since this branch
+				  effectively belongs to the upstream repository
+
+
+	6.3 GitHub - Maintaining a Project
+
+		- Creating a New Repository
+
+			- Repository name
+
+					<user>/<project_name>
+
+			- Accessibility
+
+					https://github.com/<user>/<project_name>	# HTTPS
+					git@github.com:<user>/<project_name>		# SSH
+
+		- Adding Collaborators
+
+			- Giving "push" access to repository
+
+		- Managing Pull Requests	
+
+			- Merging
+
+					git pull <url> patch-1
+
+				- or
+
+					(1) create and switch to a topic branch
+					(2) then run the command above to merge in the Pull Request
+						changes
+
+				- Another way (using unified patch versions of the Pull Req.)
+
+					curl https://github.com/user/something/pull/1.patch | git am
+
+		- Collaborating on the Pull Request
+
+		- Pull Request Refs
+
+			- Get list of branches, tags and other references in a repositroy
+
+					git ls-remote https://github.com/schacon/blink
+
+				- If Pull Requests have been opened, there will be references
+				  that are prefixed with
+
+				  	refs/pull/
+
+				- These branches are not cloned or fetched because they are not
+				  under
+
+				  	refs/heads/
+
+			- Two references per Pull Request
+
+				(1)	refs/pull/<pr#>/head
+
+						- Points to exactly the same commit as the last commit
+						  in the Pull Request branch
+
+				(2) refs/pull/<pr#>/merge
+
+						- Represents the commit that would result if you push
+						  the "merge" button on the site
+
+			- We can fetch the reference directly (without adding remotes)
+
+					git fetch origin refs/pull/958/head
+
+				- Git puts a pointer to the commit under
+
+					.git/FETCH_HEAD
+
+				- Now we can merge it into a branch
+
+					git merge FETCH_HEAD
+
+			- Fetch all Pull Requests, and keep them up to date when connecting
+			  to the remote
+
+			  		vim .git/config
+
+						[remote "origin"]
+							url = https://github.com/libgit2/libgit2
+							fetch = +refs/heads/*:refs/remotes/origin/*
+
+				- "fetch = ..."	is a "refspec"
+					- Mapping names on the remote with names in local .git dir
+					- The one above:
+						- "the things on the remote that are under refs/heads
+						   should go in my local repository under refs/remotes/
+						   origin"
+
+				- Another refspec
+
+						[remote "origin"]
+							url = https://github.com/libgit2/libgit2
+							fetch = +refs/heads/*:refs/remotes/origin/*
+							fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
+
+				- After fetching all remote Pull Requests are represented
+				  locally with refs that act much like trakcing branches (read-
+				  only, update when doing a fetch)
+
+				  		git fetch
+
+				- Try code locally
+
+						git checkout pr/2
+
+			- Similarily with refs/pull/#/merge
+
+				- Can be tested before hitting the merge button!
+
+		- Pull Requests on Pull Requests
+
+		- Mentions and Notifications
+
+			- In any comment, use the following to "subscribe" the user:
+
+						@<user/name>
+
+			- Good way to pull people into conversation
+			- Use the "Unsubscribe" button to no longer receive notifications
+
+		- The Notification Page
+
+			- "Notification Center"
+
+				- On settings page
+					- Email
+					- Web
+
+			- Turn off email notification and work with web only?
+			- Message-ID in email notifications
+
+						<user>/<project>/<type>/<id>
+
+						user1/fade/pull/1@github.com
+						user2/fade/issues/1@github.com
+
+		- Special Files
+
+			- README
+
+				- Usually holds relevant information of the repo/project, e.g.:
+					- What the project is for
+					- How to configure and install it
+					- An example of how to use it or get it running
+					- The license that the project is offered under
+					- How to contribut to it
+				- GitHub will render this file	
+
+			- CONTRIBUTING
+
+				- GitHub opens a specific window, when this file exists
+				- Idea: people should read guidelines befor opening a Pull Req
+
+		- Project Administration
+
+			- CHanging the Default Branch
+
+					Repository Settings > Options > Default branch
+
+			- Transferring a Project
+
+					Options > Transfer ownership (Danger Zone)
+
+
+	6.4 GitHub - Managing an organization
+
+		- Organizations
+
+			- Represent a group of people with shared ownership of projects
+			- Subgroups
+			- Usually used for
+				- Open Source groups
+				- Companies
+
+		- Teams 
+
+			- Grouping of individual user accounts and repositories within an
+			  organization and what kind of access those people have in those
+			  repositories
+
+		- Team page
+
+			- Used to
+				- add members
+				- add repositories to a team
+				- manage settings and access control levels for a team
+			- Access control levels (Settings)
+				- read only
+				- read/write
+				- administrative access
+			- Teams can be mentioned
+
+					@<organization>/<team>
+
+					@acmecorp/frontend
+
+				- Useful for contacting someone you don't know (yet)
+
+		- Audit Log
+
+			- Information about
+				- what went on under the organization
+				- what events have happened at organization level
+				- who did what (worldwide)
+
+
+	6.5 GitHub - Scripting GitHub
+
+		- Services and Hooks
+
+			- Sections of Github repository administration
+			- Services
+
+				- Most used for
+					- CI
+					- bug and issue trackers
+					- chat room systems
+					- documentation systems
+
+			- Hooks
+
+				- More generic than services
+				- Process
+					(1) create web service
+					(2) specify a URL in Github
+					(3) GitHub will post HTTP payload to the URL on given events
+
+		- The GitHub API
+
+			- Basic Usage
+
+				- Simple GET request on an endpoint that does not require auth
+
+					curl https://api.github.com/users/<user>
+
+				- Use the API to find a .gitignore template
+
+					curl https://api.github.com/gitignore/templates/Java
+
+			- Commenting on an Issue
+
+				- Authentication required
+					- User/Password
+					- Personal Token
+
+				- Personal Token
+					- Generate
+
+						Settings Page > Applications > Generate new token
+
+					- Make sure to use a good description!
+						- To feel comfortable removing the token when the
+						  script/application is no longer used
+					- Be sure to copy the token
+						- GitHub shows it only once
+					- Increases rate limit
+						- no auth  :    60 requests/hour
+						- with auth: 5.000 requests/hour
+
+			- Example
+
+				- Leave a comment on a specific issue (#6)
+				- Procedure
+					- HTTP POST request, using a token as auth header, to:
+
+						repos/<user>/<repo>/issues/<num>/comments
+
+				- CLI:
+
+						curl -H "Content-Type: application/json" \
+							 -H "Authorization: token TOKEN" \
+							 --data '{"body":"A new comment, :1:"}' \
+							 https://api.github.com/\
+							 		 repos/user1/proj1/issues/6/comments
+
+			- Some things that can be done with the API
+				- creating/setting milestones
+				- assigning people to Issues and Pull Requests
+				- creating/changing labels
+				- accessing commit data
+				- creating new commits and branches
+				- opening/closing/merging Pull Requests
+				- creating/editing teams
+				- commenting on lines of code in a Pull Request
+				- searching the site
+				- ...
+
+			- Example
+
+				- Changing the Status of a Pull Request
+					- Commits can have one or more statuses associated with it
+					- API can add and query this status
+
+						...
+						status = {
+							"state"		  => state,
+							"description" => description,
+							"target_url"  => "http://example.com/how-to",
+							"context"	  => "validate/signoff"
+						}
+						...
+
+			- Octokit
+
+				- Open-source libraries making the API available
+					- e.g., Terraform
+					- check:
+
+						https://github.com/octokit
